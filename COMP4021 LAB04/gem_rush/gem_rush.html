@@ -17,11 +17,11 @@
     }
     canvas, #game-start, #game-over {
         border: 1px solid gray;
-        width: 854px;
-        height: 480px;
+        width: 992px;
+        height: 416px;
     }
     canvas {
-        background: url(background.png);
+        background: url(MinefieldBG.png);
         background-size: cover;
     }
     #game-start, #game-over {
@@ -114,7 +114,7 @@
         let collectedGems = 0;      // The number of gems collected in the game
 
         /* Create the game area */
-        const gameArea = BoundingBox(context, 165, 60, 420, 800);
+        const gameArea = BoundingBox(context, 32, 32, 416, 816);
 
         /* Create the sprites in the game */
         const player = Player(context, 427, 240, gameArea); // The player
