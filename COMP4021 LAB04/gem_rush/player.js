@@ -82,23 +82,29 @@ const Player = function(ctx, x, y, gameArea) {
 
     // This function updates the player depending on his movement.
     // - `time` - The timestamp when this function is called
-    const update = function(time) {
+    const update = function(time, Obstacle) {
         /* Update the player if the player is moving */
         if (direction != 0) {
             let { x, y } = sprite.getXY();
+            let newX = x, newY = y;
 
             /* Move the player */
             switch (direction) {
-                case 1: x -= speed / 60; break;
-                case 2: y -= speed / 60; break;
-                case 3: x += speed / 60; break;
-                case 4: y += speed / 60; break;
+                case 1: newX -= speed / 60; break;
+                case 2: newY -= speed / 60; break;
+                case 3: newX += speed / 60; break;
+                case 4: newY += speed / 60; break;
             }
 
+            let isObstacle = Obstacle.some(obstacle => {
+                let obstacleBox = obstacle.getBoundingBox();
+                //console.log(newX, newY,obstacleBox.isPointInBox(newX, newY),sprite.getHeight());
+                return obstacleBox.isPointInBox(newX, newY)|| obstacleBox.isPointInBox(newX, newY+20);
+            });
             /* Set the new position if it is within the game area */
-            if (gameArea.isPointInBox(x, y))
-                sprite.setXY(x, y);
-        }
+            if (gameArea.isPointInBox(newX, newY) && !isObstacle)
+            sprite.setXY(newX, newY);
+    }
 
         /* Update the sprite object */
         sprite.update(time);

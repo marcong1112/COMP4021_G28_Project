@@ -78,7 +78,7 @@ const BoundingBox = function(ctx, top, left, bottom, right) {
         const y = top + (Math.random() * (bottom - top));
         return {x, y};
     };
-
+  
     // The methods are returned as an object here.
     return {
         getTop: getTop,
@@ -88,6 +88,7 @@ const BoundingBox = function(ctx, top, left, bottom, right) {
         getPoints: getPoints,
         isPointInBox: isPointInBox,
         intersect: intersect,
-        randomPoint: randomPoint
+        randomPoint: randomPoint,
+        moveTo: moveTo
     };
 };
