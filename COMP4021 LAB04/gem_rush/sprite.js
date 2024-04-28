@@ -192,6 +192,9 @@ const Sprite = function(ctx, x, y) {
         }
         return this;
     };
+    const getHeight = function() {
+        return sequence.height * scale;
+    };
 
     // The methods are returned as an object here.
     return {
@@ -203,6 +206,7 @@ const Sprite = function(ctx, x, y) {
         setShadowScale: setShadowScale,
         getDisplaySize: getDisplaySize,
         getBoundingBox: getBoundingBox,
+        getHeight: getHeight,
         isReady: isReady,
         draw: draw,
         update: update
