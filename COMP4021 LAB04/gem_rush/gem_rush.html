@@ -97,6 +97,7 @@
     <script src="fire.js"></script>
     <script src="Obstacle.js"></script>
     <script src="EmptyObstacle.js"></script>
+    <script src="Bomb.js"></script>
     <script>
     $(function() {
         /* Get the canvas and 2D context */
@@ -130,18 +131,89 @@
             Fire(context, 838, 464)
         ]; // The fires */
         const MapObstacle = [
-            Obstacle(context, 80, 80),
-            Obstacle(context, 112, 80),
-            Obstacle(context, 144, 80),
-            Obstacle(context, 176, 80),
-            Obstacle(context, 176, 112),
+            //Obstacle(context, 80, 80),
+            //Obstacle(context, 112, 80),
+            //Obstacle(context, 144, 80),
+            //Obstacle(context, 176, 80),
+            //Obstacle(context, 176, 112),
             Obstacle(context, 176, 144),
             Obstacle(context, 176, 176),
             Obstacle(context, 176, 208),
         ];
         const MapEmptyObstacle=[
+            EmptyObstacle(context, 80, 80),
             EmptyObstacle(context, 80, 144),
+            EmptyObstacle(context, 80, 208),
+            EmptyObstacle(context, 80, 272),
+    
+            EmptyObstacle(context, 144, 80),
+            EmptyObstacle(context, 144, 144),
+            EmptyObstacle(context, 144, 208),
+            EmptyObstacle(context, 144, 272),
 
+            EmptyObstacle(context, 208, 80),
+            EmptyObstacle(context, 208, 144),
+            EmptyObstacle(context, 208, 208),
+            EmptyObstacle(context, 208, 272),
+
+            EmptyObstacle(context, 272, 80),
+            EmptyObstacle(context, 272, 144),
+            EmptyObstacle(context, 272, 208),
+            EmptyObstacle(context, 272, 272),
+
+            EmptyObstacle(context, 336, 80),
+            EmptyObstacle(context, 336, 144),
+            EmptyObstacle(context, 336, 208),
+            EmptyObstacle(context, 336, 272),
+
+            EmptyObstacle(context, 400, 80),
+            EmptyObstacle(context, 400, 144),
+            EmptyObstacle(context, 400, 208),
+            EmptyObstacle(context, 400, 272),
+
+            EmptyObstacle(context, 464, 80),
+            EmptyObstacle(context, 464, 144),
+            EmptyObstacle(context, 464, 208),
+            EmptyObstacle(context, 464, 272),
+
+            EmptyObstacle(context, 528, 80),
+            EmptyObstacle(context, 528, 144),
+            EmptyObstacle(context, 528, 208),
+            EmptyObstacle(context, 528, 272),
+
+            EmptyObstacle(context, 592, 80),
+            EmptyObstacle(context, 592, 144),
+            EmptyObstacle(context, 592, 208),
+            EmptyObstacle(context, 592, 272),
+
+            EmptyObstacle(context, 656, 80),
+            EmptyObstacle(context, 656, 144),
+            EmptyObstacle(context, 656, 208),
+            EmptyObstacle(context, 656, 272),
+
+            EmptyObstacle(context, 720, 80),
+            EmptyObstacle(context, 720, 144),
+            EmptyObstacle(context, 720, 208),
+            EmptyObstacle(context, 720, 272),
+
+            EmptyObstacle(context, 784, 80),
+            EmptyObstacle(context, 784, 144),
+            EmptyObstacle(context, 784, 208),
+            EmptyObstacle(context, 784, 272),
+
+            EmptyObstacle(context, 848, 80),
+            EmptyObstacle(context, 848, 144),
+            EmptyObstacle(context, 848, 208),
+            EmptyObstacle(context, 848, 272),
+
+            EmptyObstacle(context, 912, 80),
+            EmptyObstacle(context, 912, 144),
+            EmptyObstacle(context, 912, 208),
+            EmptyObstacle(context, 912, 272),
+        ];
+        const MapBomb=[
+            Bomb(context, 80, 176),
+            //Bomb(context, 80, 208),
         ];
         //const fire = Fire(context, 0, 0, "green");
 
@@ -206,6 +278,7 @@
             fires.forEach(fire => fire.draw());
             MapObstacle.forEach(Obstacle => Obstacle.draw());
             MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
+            MapBomb.forEach(Bomb => Bomb.draw());
             player.draw();
             
 
