@@ -96,6 +96,7 @@
     <script src="gem.js"></script>
     <script src="fire.js"></script>
     <script src="Obstacle.js"></script>
+    <script src="EmptyObstacle.js"></script>
     <script>
     $(function() {
         /* Get the canvas and 2D context */
@@ -119,6 +120,7 @@
 
         /* Create the sprites in the game */
         const player = Player(context, 427, 240, gameArea); // The player
+
         const gem = Gem(context, 427, 350, "green");        // The gem
         //create 4 fires at each corner of the game area
         const fires = [
@@ -136,6 +138,10 @@
             Obstacle(context, 176, 144),
             Obstacle(context, 176, 176),
             Obstacle(context, 176, 208),
+        ];
+        const MapEmptyObstacle=[
+            EmptyObstacle(context, 80, 144),
+
         ];
         //const fire = Fire(context, 0, 0, "green");
 
@@ -169,7 +175,7 @@
 
             /* Update the sprites */
             gem.update(now);
-            player.update(now, MapObstacle);
+            player.update(now, MapObstacle, MapEmptyObstacle);
             fires.forEach(fire => fire.update(now));
             //player.update(now, MapObstacle);
 
@@ -199,6 +205,7 @@
             gem.draw();
             fires.forEach(fire => fire.draw());
             MapObstacle.forEach(Obstacle => Obstacle.draw());
+            MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
             player.draw();
             
 
@@ -213,8 +220,6 @@
 
             /* Handle the keydown of arrow keys and spacebar */
             $(document).on("keydown", function(event) {
-
-
                 /* TODO */
                 /* Handle the key down */
                 //console.log(event.keyCode);
@@ -237,8 +242,6 @@
 
             /* Handle the keyup of arrow keys and spacebar */
             $(document).on("keyup", function(event) {
-
-
                 /* TODO */
                 /* Handle the key up */
                 //console.log(event.keyCode);
