@@ -52,6 +52,20 @@ const Gem = function(ctx, x, y, color) {
         sprite.setXY(x, y);
     };
 
+    const reset=function(){
+        let {x,y}=sprite.getXY();
+        sprite.setXY(-100, -100);
+
+        const colors = ["green", "red", "yellow", "purple"];
+        setColor(colors[Math.floor(Math.random() * 4)]);
+
+        setTimeout(() => {
+            sprite.setXY(x, y);
+        }, 15000); // 15000 milliseconds = 15 seconds
+        
+        
+    };
+
     // The methods are returned as an object here.
     return {
         getXY: sprite.getXY,
@@ -61,6 +75,7 @@ const Gem = function(ctx, x, y, color) {
         getBoundingBox: sprite.getBoundingBox,
         randomize: randomize,
         draw: sprite.draw,
-        update: sprite.update
+        update: sprite.update,
+        reset:reset
     };
 };
