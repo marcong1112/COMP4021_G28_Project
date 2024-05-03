@@ -32,6 +32,7 @@ const Fire = function(ctx, x, y) {
 
     // The methods are returned as an object here.
     return {
+        setSequence: sprite.setSequence,
         getXY: sprite.getXY,
         setXY: sprite.setXY,
         setColor: setColor,

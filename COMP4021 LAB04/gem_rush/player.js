@@ -27,7 +27,7 @@ const Player = function(ctx, x, y, gameArea) {
 
     // The sprite object is configured for the player sprite here.
     sprite.setSequence(sequences.idleDown)
-          .setScale(2)
+          .setScale(1.5)
           .setShadowScale({ x: 0.75, y: 0.20 })
           .useSheet("player_sprite.png");
 
@@ -40,7 +40,7 @@ const Player = function(ctx, x, y, gameArea) {
     let direction = 0;
 
     // This is the moving speed (pixels per second) of the player
-    let speed = 150;
+    let speed = 80;
 
     // This function sets the player's moving direction.
     // - `dir` - the moving direction (1: Left, 2: Up, 3: Right, 4: Down)
@@ -77,7 +77,7 @@ const Player = function(ctx, x, y, gameArea) {
 
     // This function slows down the player.
     const slowDown = function() {
-        speed = 150;
+        speed = 50;
     };
 
     // This function updates the player depending on his movement.
@@ -118,6 +118,7 @@ const Player = function(ctx, x, y, gameArea) {
 
     // The methods are returned as an object here.
     return {
+        getXY: sprite.getXY,
         move: move,
         stop: stop,
         speedUp: speedUp,

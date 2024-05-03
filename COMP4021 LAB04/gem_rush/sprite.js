@@ -15,7 +15,7 @@ const Sprite = function(ctx, x, y) {
     // - `count` - The total number of sprite images in the sequence
     // - `timing` - The timing for each sprite image
     // - `loop` - `true` if the sprite sequence is looped
-    let sequence = { x: 0, y: 0, width: 20, height: 20, count: 1, timing: 0, loop: false };
+    let sequence = { x: 0, y: 0, width: 16, height: 16, count: 1, timing: 0, loop: false };
 
     // This is the index indicating the current sprite image used in the sprite sequence.
     let index = 0;
@@ -86,6 +86,7 @@ const Sprite = function(ctx, x, y) {
     const getDisplaySize = function() {
         /* Find the scaled width and height of the sprite */
         const scaledWidth  = sequence.width * scale;
+        //console.log("sequence.width: " + sequence.width);
         const scaledHeight = sequence.height * scale;
         return {width: scaledWidth, height: scaledHeight};
     };
@@ -174,7 +175,6 @@ const Sprite = function(ctx, x, y) {
     // - `time` - The timestamp when this function is called
     const update = function(time) {
         if (lastUpdate == 0) lastUpdate = time;
-
 
         /* TODO */ /* DONE */ 
         /* character doesn't move, gem moves */
