@@ -78,6 +78,8 @@ const BoundingBox = function(ctx, top, left, bottom, right) {
         const y = top + (Math.random() * (bottom - top));
         return {x, y};
     };
+
+
   
     // The methods are returned as an object here.
     return {

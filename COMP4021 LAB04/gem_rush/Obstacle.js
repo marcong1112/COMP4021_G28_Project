@@ -29,9 +29,13 @@ const Obstacle = function(ctx, x, y) {
     const getAge = function(now) {
         return now - birthTime;
     };
+    const destroy = function(){
+        sprite.setXY(-100,100);
+    }
 
     // The methods are returned as an object here.
     return {
+        destroy:destroy,
         getXY: sprite.getXY,
         setXY: sprite.setXY,
         setColor: setColor,

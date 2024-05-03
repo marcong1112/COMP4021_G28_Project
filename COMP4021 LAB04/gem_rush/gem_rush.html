@@ -113,15 +113,18 @@
 
         const totalGameTime = 20;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
+        const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
+
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
 
         /* Create the game area */
-        const gameArea = BoundingBox(context, 32, 48, 352, 944);
+        //const gameArea = BoundingBox(context, 32, 48, 352, 944);
+        const gameArea = BoundingBox(context, 32, 48, 360, 944);
 
         /* Create the sprites in the game */
 
-        const player = Player(context, 80, 240, gameArea); // The player\
+        const player = Player(context, 80, 235, gameArea); // The player\
         
         const gemcolors = ["green", "red", "yellow", "purple"];
         let gemlist = [
@@ -242,79 +245,102 @@
             EmptyObstacle(context, 80, 144),
             EmptyObstacle(context, 80, 208),
             EmptyObstacle(context, 80, 272),
+            EmptyObstacle(context, 80, 336),
     
             EmptyObstacle(context, 144, 80),
             EmptyObstacle(context, 144, 144),
             EmptyObstacle(context, 144, 208),
             EmptyObstacle(context, 144, 272),
+            EmptyObstacle(context, 144, 336),
 
             EmptyObstacle(context, 208, 80),
             EmptyObstacle(context, 208, 144),
             EmptyObstacle(context, 208, 208),
             EmptyObstacle(context, 208, 272),
+            EmptyObstacle(context, 208, 336),
 
             EmptyObstacle(context, 272, 80),
             EmptyObstacle(context, 272, 144),
             EmptyObstacle(context, 272, 208),
             EmptyObstacle(context, 272, 272),
+            EmptyObstacle(context, 272, 336),
 
             EmptyObstacle(context, 336, 80),
             EmptyObstacle(context, 336, 144),
             EmptyObstacle(context, 336, 208),
             EmptyObstacle(context, 336, 272),
+            EmptyObstacle(context, 336, 336),
 
             EmptyObstacle(context, 400, 80),
             EmptyObstacle(context, 400, 144),
             EmptyObstacle(context, 400, 208),
             EmptyObstacle(context, 400, 272),
+            EmptyObstacle(context, 400, 336),
 
             EmptyObstacle(context, 464, 80),
             EmptyObstacle(context, 464, 144),
             EmptyObstacle(context, 464, 208),
             EmptyObstacle(context, 464, 272),
+            EmptyObstacle(context, 464, 336),
 
             EmptyObstacle(context, 528, 80),
             EmptyObstacle(context, 528, 144),
             EmptyObstacle(context, 528, 208),
             EmptyObstacle(context, 528, 272),
+            EmptyObstacle(context, 528, 336),
 
             EmptyObstacle(context, 592, 80),
             EmptyObstacle(context, 592, 144),
             EmptyObstacle(context, 592, 208),
             EmptyObstacle(context, 592, 272),
+            EmptyObstacle(context, 592, 336),
 
             EmptyObstacle(context, 656, 80),
             EmptyObstacle(context, 656, 144),
             EmptyObstacle(context, 656, 208),
             EmptyObstacle(context, 656, 272),
+            EmptyObstacle(context, 656, 336),
 
             EmptyObstacle(context, 720, 80),
             EmptyObstacle(context, 720, 144),
             EmptyObstacle(context, 720, 208),
             EmptyObstacle(context, 720, 272),
+            EmptyObstacle(context, 720, 336),
 
             EmptyObstacle(context, 784, 80),
             EmptyObstacle(context, 784, 144),
             EmptyObstacle(context, 784, 208),
             EmptyObstacle(context, 784, 272),
+            EmptyObstacle(context, 784, 336),
 
             EmptyObstacle(context, 848, 80),
             EmptyObstacle(context, 848, 144),
             EmptyObstacle(context, 848, 208),
             EmptyObstacle(context, 848, 272),
+            EmptyObstacle(context, 848, 336),
 
             EmptyObstacle(context, 912, 80),
             EmptyObstacle(context, 912, 144),
             EmptyObstacle(context, 912, 208),
             EmptyObstacle(context, 912, 272),
-        ];
-        const MapBomb=[
-            Bomb(context, 80, 176),
-            //Bomb(context, 80, 208),
-        ];
-        //const fire = Fire(context, 0, 0, "green");
+            EmptyObstacle(context, 912, 336),
 
+            EmptyObstacle(context, 976, 80),
+            EmptyObstacle(context, 976, 144),
+            EmptyObstacle(context, 976, 208),
+            EmptyObstacle(context, 976, 272),
+            EmptyObstacle(context, 976, 336),
+        ];
 
+        //const bomb = Bomb(context, 80, 176);   
+        let bomblist = [
+            //Bomb(context, 80, 176),
+        ];  
+
+        //make array of array to store effect bomb, each entry stores 4 bomb effects
+        let effectbomblist =[];
+
+        
         /* The main processing of the game */
         function doFrame(now) {
             if (gameStartTime == 0) gameStartTime = now;
@@ -341,40 +367,72 @@
                 return;
             }
 
-
             /* Update the sprites */
+            //gem.update(now);
 
-            gemlist.forEach(gem => gem.update(now));
-            player.update(now, MapObstacle);
+
+            //bomb.update(now);
+            //bomblist.forEach(Bomb => Bomb.update(now));
+
+            player.update(now, MapObstacle, MapEmptyObstacle);
             fires.forEach(fire => fire.update(now));
-            //player.update(now, MapObstacle);
-
-            //let {x, y} = gem.getXY();
-
-            gemlist.forEach(gem => {
-                let {x, y} = gem.getXY();
-                if (player.getBoundingBox().isPointInBox(x, y)){
-                    collectedGems++;
-                    gem.reset();                    
-                    sounds.collect.pause();
-                    sounds.collect.currentTime = 0;
-                    sounds.collect.play();
-            }
-            });
-            
 
             /* Clear the screen */
             context.clearRect(0, 0, cv.width, cv.height);
 
             /* Draw the sprites */
-            gemlist.forEach(gem => gem.draw());;
+
+            gemlist.forEach(gem => gem.draw());
             fires.forEach(fire => fire.draw());
             MapObstacle.forEach(Obstacle => Obstacle.draw());
             MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
-            MapBomb.forEach(Bomb => Bomb.draw());
+            bomblist.forEach(Bomb => Bomb.draw());
             player.draw();
-            //console.log(player.getXY());
+           
+            bomblist.forEach(Bomb => {
+                if (Bomb.getAge(now) > bombMaxAge){
+                    //Bomb.clear();
+                    //delay 1 second before removing bomb from bomblist
+                    //get x and y of bomb
+                    let {x, y} = Bomb.getXY();
+
+                    //explode the 4 bombs to get the effect of explosion
+  
+                    Bomb_index = bomblist.indexOf(Bomb);
+                    Bomb.explode(1);
+                    Bomb.detectCollision(MapObstacle);
+
+                    //console.log(Bomb.checkCollision(MapObstacle));
+                    //console.log(Bomb.PassAreaBomb(0).getXY(), Bomb.PassAreaBomb(1).getXY(), Bomb.PassAreaBomb(2).getXY(), Bomb.PassAreaBomb(3).getXY());
+                    (Bomb.PassAreaBomb(0)).draw();
+                    (Bomb.PassAreaBomb(1)).draw();
+                    (Bomb.PassAreaBomb(2)).draw();
+                    (Bomb.PassAreaBomb(3)).draw();
+                 
+                    setTimeout(() => {
+                        bomblist = bomblist.filter(bomb => bomb !== Bomb);
+                    }, 1000);
+                    
+
+                }
+            });
             
+            
+
+            //const {x, y} = gem.getXY();
+            gemlist.forEach(gem => {
+                let {x, y} = gem.getXY();
+                if (player.getBoundingBox().isPointInBox(x, y)){
+                    collectedGems++;
+                    gem.reset();
+                    console.log("collected gem!");
+                    //pause collect sound
+                    sounds.collect.pause();
+                    //set collect sound to 0
+                    sounds.collect.currentTime = 0;
+                    sounds.collect.play();
+                }
+            });
 
             /* Process the next frame */
             requestAnimationFrame(doFrame);
@@ -404,7 +462,17 @@
                 if (event.keyCode == 32){
                     player.speedUp();
                 }
-            
+
+                //if "a" is pressed, bomb is placed at player's position
+                if (event.keyCode == 65){
+                    //get current player position
+                    let {x, y} = player.getXY();
+                    console.log("player x: " + x + " player y: " + y);
+                    
+                    //create new bomb at player's position and append to bomblist
+                    bomblist.push(Bomb(context, x, y));
+                }
+
             });
 
             /* Handle the keyup of arrow keys and spacebar */
@@ -429,6 +497,8 @@
             });
 
             /* Start the game */
+            //console.log(player.getXY());
+            //gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
     });
