@@ -368,7 +368,7 @@
             }
 
             /* Update the sprites */
-            gem.update(now);
+            //gem.update(now);
 
 
             //bomb.update(now);
@@ -427,17 +427,19 @@
             
             
 
-            const {x, y} = gem.getXY();
-            if (player.getBoundingBox().isPointInBox(x, y)){
-                collectedGems++;
-                gem.randomize(gameArea);
-                console.log("collected gem!");
-                //pause collect sound
-                sounds.collect.pause();
-                //set collect sound to 0
-                sounds.collect.currentTime = 0;
-                sounds.collect.play();
-            }
+            //const {x, y} = gem.getXY();
+            gemlist.forEach(gem => {
+                if (player.getBoundingBox().isPointInBox(x, y)){
+                    collectedGems++;
+                    gem.reset();
+                    console.log("collected gem!");
+                    //pause collect sound
+                    sounds.collect.pause();
+                    //set collect sound to 0
+                    sounds.collect.currentTime = 0;
+                    sounds.collect.play();
+                }
+            });
             
 
             /* Clear the screen */
@@ -544,7 +546,7 @@
 
             /* Start the game */
             //console.log(player.getXY());
-            gem.randomize(gameArea);
+            //gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
     });
