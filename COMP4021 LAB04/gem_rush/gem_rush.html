@@ -113,11 +113,14 @@
 
         const totalGameTime = 20;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
+        const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
+
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
 
         /* Create the game area */
-        const gameArea = BoundingBox(context, 32, 48, 352, 944);
+        //const gameArea = BoundingBox(context, 32, 48, 352, 944);
+        const gameArea = BoundingBox(context, 32, 48, 360, 944);
 
         /* Create the sprites in the game */
         const player = Player(context, 427, 240, gameArea); // The player
@@ -145,79 +148,102 @@
             EmptyObstacle(context, 80, 144),
             EmptyObstacle(context, 80, 208),
             EmptyObstacle(context, 80, 272),
+            EmptyObstacle(context, 80, 336),
     
             EmptyObstacle(context, 144, 80),
             EmptyObstacle(context, 144, 144),
             EmptyObstacle(context, 144, 208),
             EmptyObstacle(context, 144, 272),
+            EmptyObstacle(context, 144, 336),
 
             EmptyObstacle(context, 208, 80),
             EmptyObstacle(context, 208, 144),
             EmptyObstacle(context, 208, 208),
             EmptyObstacle(context, 208, 272),
+            EmptyObstacle(context, 208, 336),
 
             EmptyObstacle(context, 272, 80),
             EmptyObstacle(context, 272, 144),
             EmptyObstacle(context, 272, 208),
             EmptyObstacle(context, 272, 272),
+            EmptyObstacle(context, 272, 336),
 
             EmptyObstacle(context, 336, 80),
             EmptyObstacle(context, 336, 144),
             EmptyObstacle(context, 336, 208),
             EmptyObstacle(context, 336, 272),
+            EmptyObstacle(context, 336, 336),
 
             EmptyObstacle(context, 400, 80),
             EmptyObstacle(context, 400, 144),
             EmptyObstacle(context, 400, 208),
             EmptyObstacle(context, 400, 272),
+            EmptyObstacle(context, 400, 336),
 
             EmptyObstacle(context, 464, 80),
             EmptyObstacle(context, 464, 144),
             EmptyObstacle(context, 464, 208),
             EmptyObstacle(context, 464, 272),
+            EmptyObstacle(context, 464, 336),
 
             EmptyObstacle(context, 528, 80),
             EmptyObstacle(context, 528, 144),
             EmptyObstacle(context, 528, 208),
             EmptyObstacle(context, 528, 272),
+            EmptyObstacle(context, 528, 336),
 
             EmptyObstacle(context, 592, 80),
             EmptyObstacle(context, 592, 144),
             EmptyObstacle(context, 592, 208),
             EmptyObstacle(context, 592, 272),
+            EmptyObstacle(context, 592, 336),
 
             EmptyObstacle(context, 656, 80),
             EmptyObstacle(context, 656, 144),
             EmptyObstacle(context, 656, 208),
             EmptyObstacle(context, 656, 272),
+            EmptyObstacle(context, 656, 336),
 
             EmptyObstacle(context, 720, 80),
             EmptyObstacle(context, 720, 144),
             EmptyObstacle(context, 720, 208),
             EmptyObstacle(context, 720, 272),
+            EmptyObstacle(context, 720, 336),
 
             EmptyObstacle(context, 784, 80),
             EmptyObstacle(context, 784, 144),
             EmptyObstacle(context, 784, 208),
             EmptyObstacle(context, 784, 272),
+            EmptyObstacle(context, 784, 336),
 
             EmptyObstacle(context, 848, 80),
             EmptyObstacle(context, 848, 144),
             EmptyObstacle(context, 848, 208),
             EmptyObstacle(context, 848, 272),
+            EmptyObstacle(context, 848, 336),
 
             EmptyObstacle(context, 912, 80),
             EmptyObstacle(context, 912, 144),
             EmptyObstacle(context, 912, 208),
             EmptyObstacle(context, 912, 272),
-        ];
-        const MapBomb=[
-            Bomb(context, 80, 176),
-            //Bomb(context, 80, 208),
-        ];
-        //const fire = Fire(context, 0, 0, "green");
+            EmptyObstacle(context, 912, 336),
 
+            EmptyObstacle(context, 976, 80),
+            EmptyObstacle(context, 976, 144),
+            EmptyObstacle(context, 976, 208),
+            EmptyObstacle(context, 976, 272),
+            EmptyObstacle(context, 976, 336),
+        ];
 
+        //const bomb = Bomb(context, 80, 176);   
+        let bomblist = [
+            //Bomb(context, 80, 176),
+        ];  
+
+        //make array of array to store effect bomb, each entry stores 4 bomb effects
+        let effectbomblist =[];
+
+        
         /* The main processing of the game */
         function doFrame(now) {
             if (gameStartTime == 0) gameStartTime = now;
@@ -244,18 +270,69 @@
                 return;
             }
 
-
             /* Update the sprites */
             gem.update(now);
+
+
+            //bomb.update(now);
+            //bomblist.forEach(Bomb => Bomb.update(now));
+
             player.update(now, MapObstacle, MapEmptyObstacle);
             fires.forEach(fire => fire.update(now));
-            //player.update(now, MapObstacle);
 
             /* TODO */
             /* Randomize the gem and collect the gem here */
             if (gem.getAge(now) > gemMaxAge) {
                 gem.randomize(gameArea);
             }
+
+            //check all bomb age and explode if age is greater than bombMaxAge
+            //loop all bombs in bomblist
+
+            
+            bomblist.forEach(Bomb => {
+                if (Bomb.getAge(now) > bombMaxAge){
+                    //Bomb.clear();
+                    //delay 1 second before removing bomb from bomblist
+                    //get x and y of bomb
+                    let {x, y} = Bomb.getXY();
+
+                    //explode the 4 bombs to get the effect of explosion
+                    counter = 2;
+                    // if (effectbomblist.length > 0){
+                    //     console.log("I am in!");
+                    //     for (let i=0; i<4; i++){
+                    //         Bomb.explode(1);
+                    //         console.log("effect bomb x: " + effectbomblist[i].getXY().x + " effect bomb y: " + effectbomblist[i].getXY().y);
+                    //         effectbomblist[i].explode(counter);
+                    //         //wait for 1 second before clearing the effect bomb
+                    //         counter++;
+                    //     }
+                    // }
+                    
+                    Bomb_index = bomblist.indexOf(Bomb);
+                    Bomb.explode(1);
+                    if (effectbomblist.length > 0){
+                        for (let i=0; i<4; i++){
+                            //console.log("effect bomb x: " + effectbomblist[i].getXY().x + " effect bomb y: " + effectbomblist[i].getXY().y);
+                            if (effectbomblist.length > 0){
+                                effectbomblist[Bomb_index][i].explode(counter);
+                            }
+                            //wait for 1 second before clearing the effect bomb
+                            counter++;
+                        }
+                    }
+
+
+                    setTimeout(() => {
+                        bomblist = bomblist.filter(bomb => bomb !== Bomb);
+                    }, 1000);
+                    
+
+                }
+            });
+            
+            
 
             const {x, y} = gem.getXY();
             if (player.getBoundingBox().isPointInBox(x, y)){
@@ -278,9 +355,20 @@
             fires.forEach(fire => fire.draw());
             MapObstacle.forEach(Obstacle => Obstacle.draw());
             MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
-            MapBomb.forEach(Bomb => Bomb.draw());
+            bomblist.forEach(Bomb => Bomb.draw());
+
+            if (effectbomblist.length > 0){
+                for (let i=0; i<effectbomblist.length; i++){
+                    for (let j=0; j<4; j++){
+                        effectbomblist[i][j].draw();
+                    }
+                }
+            }
+
+            //bomb.draw();
             player.draw();
             
+            //effectbomblist=[];
 
             /* Process the next frame */
             requestAnimationFrame(doFrame);
@@ -310,7 +398,33 @@
                 if (event.keyCode == 32){
                     player.speedUp();
                 }
-            
+
+                //if "a" is pressed, bomb is placed at player's position
+                if (event.keyCode == 65){
+                    //get current player position
+                    let {x, y} = player.getXY();
+                    console.log("player x: " + x + " player y: " + y);
+                    
+                    //create new bomb at player's position and append to bomblist
+                    bomblist.push(Bomb(context, x, y));
+                    
+                    //create 4 bombs around the bomb
+                    length = effectbomblist.length;
+                    effectbomblist.push([Bomb(context, x-32, y),Bomb(context, x+32, y),Bomb(context, x, y-32),Bomb(context, x, y+32)]);
+
+                    //timeout 1 second before clearing the bomb
+                    setTimeout(() => {
+                        console.log("I am clearing the effect bomb!");
+                        bomblist.splice((bomblist.length-1), 1);
+                        effectbomblist.splice((length), 1);
+                    }, 2001);
+                    
+                    //effectbomblist.push(Bomb(context, x-32, y));
+                    //effectbomblist.push(Bomb(context, x+32, y));
+                    //effectbomblist.push(Bomb(context, x, y-32));
+                    //effectbomblist.push(Bomb(context, x, y+32));
+                }
+
             });
 
             /* Handle the keyup of arrow keys and spacebar */
@@ -335,6 +449,7 @@
             });
 
             /* Start the game */
+            //console.log(player.getXY());
             gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
