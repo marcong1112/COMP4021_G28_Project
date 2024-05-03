@@ -23,7 +23,6 @@ const Bomb = function(ctx, x, y) {
         birthTime = performance.now();
     };
 
-
     // This function gets the age (in millisecond) of the gem.
     // - `now` - The current timestamp
     const getAge = function(now) {
