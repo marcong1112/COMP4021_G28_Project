@@ -123,9 +123,16 @@
         const gameArea = BoundingBox(context, 32, 48, 360, 944);
 
         /* Create the sprites in the game */
-        const player = Player(context, 427, 240, gameArea); // The player
 
-        const gem = Gem(context, 427, 350, "green");        // The gem
+        const player = Player(context, 80, 240, gameArea); // The player\
+        
+        const gemcolors = ["green", "red", "yellow", "purple"];
+        let gemlist = [
+            Gem(context, 496, 203, gemcolors[Math.floor(Math.random() * 4)]),
+            Gem(context, 368, 360, gemcolors[Math.floor(Math.random() * 4)]),
+            Gem(context, 624, 75, gemcolors[Math.floor(Math.random() * 4)]),
+        ]
+
         //create 4 fires at each corner of the game area
         const fires = [
             Fire(context, 16, 165),
@@ -134,14 +141,104 @@
             Fire(context, 838, 464)
         ]; // The fires */
         const MapObstacle = [
-            //Obstacle(context, 80, 80),
-            //Obstacle(context, 112, 80),
-            //Obstacle(context, 144, 80),
-            //Obstacle(context, 176, 80),
-            //Obstacle(context, 176, 112),
-            Obstacle(context, 176, 144),
+            Obstacle(context, 336, 368),
+            Obstacle(context, 336, 304),
+            Obstacle(context, 336, 240),
+            Obstacle(context, 336, 176),
+            Obstacle(context, 336, 112),
+            Obstacle(context, 336, 48),
+
+            Obstacle(context, 304, 368),
+            Obstacle(context, 368, 304),
+            Obstacle(context, 368, 336),
+            Obstacle(context, 400, 368),
+            Obstacle(context, 432, 368),
+
+            Obstacle(context, 624, 48),
+            Obstacle(context, 592, 48),
+            Obstacle(context, 656, 48),
+            Obstacle(context, 688, 48),
+            Obstacle(context, 624, 112),
+            Obstacle(context, 656, 112),
+            Obstacle(context, 592, 112),
+
+            Obstacle(context, 656, 176),
+            Obstacle(context, 656, 240),
+            Obstacle(context, 656, 304),
+            Obstacle(context, 656, 368),
+            Obstacle(context, 656, 432),
+
+            Obstacle(context, 528, 176),
+            Obstacle(context, 464, 176),
+            Obstacle(context, 496, 176),
+            Obstacle(context, 464, 240),
+            Obstacle(context, 496, 240),
+            Obstacle(context, 528, 240),
+
+            Obstacle(context, 496, 144),
+            Obstacle(context, 496, 112),
+            Obstacle(context, 496, 80),
+            Obstacle(context, 496, 48),
+            Obstacle(context, 496, 176),
+            Obstacle(context, 496, 240),
+            Obstacle(context, 496, 272),
+            Obstacle(context, 496, 304),
+            Obstacle(context, 496, 336),
+            Obstacle(context, 496, 368),
+
+            Obstacle(context, 432, 208),
+            Obstacle(context, 368, 208),
+            Obstacle(context, 560, 208),
+            Obstacle(context, 624, 208),
+            
+            Obstacle(context, 560, 176),
+            Obstacle(context, 560, 144),
+            Obstacle(context, 560, 112),
+            Obstacle(context, 560, 80),
+            Obstacle(context, 560, 48),
+            
+            Obstacle(context, 432, 240),
+            Obstacle(context, 432, 272),
+            Obstacle(context, 432, 304),
+            Obstacle(context, 432, 336),
+            Obstacle(context, 400, 304),
+            
+            Obstacle(context, 48, 176),
+            Obstacle(context, 80, 176),
+            Obstacle(context, 112, 176),
+            Obstacle(context, 144, 176),
             Obstacle(context, 176, 176),
-            Obstacle(context, 176, 208),
+            Obstacle(context, 208, 176),
+            Obstacle(context, 240, 176),
+            Obstacle(context, 272, 176),
+            Obstacle(context, 304, 176),
+            Obstacle(context, 336, 176),
+            Obstacle(context, 368, 176),
+            Obstacle(context, 400, 176),
+            Obstacle(context, 432, 176),
+            Obstacle(context, 592, 176),
+            Obstacle(context, 624, 176),
+
+            Obstacle(context, 368, 240),
+            Obstacle(context, 400, 240),
+            Obstacle(context, 560, 240),
+            Obstacle(context, 592, 240),
+            Obstacle(context, 624, 240),
+            Obstacle(context, 656, 240),
+            Obstacle(context, 688, 240),
+            Obstacle(context, 720, 240),
+            Obstacle(context, 752, 240),
+            Obstacle(context, 784, 240),
+            Obstacle(context, 816, 240),
+            Obstacle(context, 848, 240),
+            Obstacle(context, 880, 240),
+            Obstacle(context, 912, 240),
+            Obstacle(context, 944, 240),
+
+
+            
+
+
         ];
         const MapEmptyObstacle=[
             EmptyObstacle(context, 80, 80),
@@ -280,11 +377,7 @@
             player.update(now, MapObstacle, MapEmptyObstacle);
             fires.forEach(fire => fire.update(now));
 
-            /* TODO */
-            /* Randomize the gem and collect the gem here */
-            if (gem.getAge(now) > gemMaxAge) {
-                gem.randomize(gameArea);
-            }
+            //let {x, y} = gem.getXY();
 
             //check all bomb age and explode if age is greater than bombMaxAge
             //loop all bombs in bomblist
@@ -345,13 +438,13 @@
                 sounds.collect.currentTime = 0;
                 sounds.collect.play();
             }
-
+            
 
             /* Clear the screen */
             context.clearRect(0, 0, cv.width, cv.height);
 
             /* Draw the sprites */
-            gem.draw();
+            gemlist.forEach(gem => gem.draw());;
             fires.forEach(fire => fire.draw());
             MapObstacle.forEach(Obstacle => Obstacle.draw());
             MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
@@ -367,6 +460,7 @@
 
             //bomb.draw();
             player.draw();
+            //console.log(player.getXY());
             
             //effectbomblist=[];
 
