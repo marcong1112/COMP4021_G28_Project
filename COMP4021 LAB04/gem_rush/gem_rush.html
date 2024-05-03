@@ -124,7 +124,7 @@
 
         /* Create the sprites in the game */
 
-        const player = Player(context, 80, 240, gameArea); // The player\
+        const player = Player(context, 80, 235, gameArea); // The player\
         
         const gemcolors = ["green", "red", "yellow", "purple"];
         let gemlist = [
@@ -377,12 +377,18 @@
             player.update(now, MapObstacle, MapEmptyObstacle);
             fires.forEach(fire => fire.update(now));
 
-            //let {x, y} = gem.getXY();
+            /* Clear the screen */
+            context.clearRect(0, 0, cv.width, cv.height);
 
-            //check all bomb age and explode if age is greater than bombMaxAge
-            //loop all bombs in bomblist
+            /* Draw the sprites */
 
-            
+            gemlist.forEach(gem => gem.draw());
+            fires.forEach(fire => fire.draw());
+            MapObstacle.forEach(Obstacle => Obstacle.draw());
+            MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
+            bomblist.forEach(Bomb => Bomb.draw());
+            player.draw();
+           
             bomblist.forEach(Bomb => {
                 if (Bomb.getAge(now) > bombMaxAge){
                     //Bomb.clear();
@@ -391,32 +397,18 @@
                     let {x, y} = Bomb.getXY();
 
                     //explode the 4 bombs to get the effect of explosion
-                    counter = 2;
-                    // if (effectbomblist.length > 0){
-                    //     console.log("I am in!");
-                    //     for (let i=0; i<4; i++){
-                    //         Bomb.explode(1);
-                    //         console.log("effect bomb x: " + effectbomblist[i].getXY().x + " effect bomb y: " + effectbomblist[i].getXY().y);
-                    //         effectbomblist[i].explode(counter);
-                    //         //wait for 1 second before clearing the effect bomb
-                    //         counter++;
-                    //     }
-                    // }
-                    
+  
                     Bomb_index = bomblist.indexOf(Bomb);
                     Bomb.explode(1);
-                    if (effectbomblist.length > 0){
-                        for (let i=0; i<4; i++){
-                            //console.log("effect bomb x: " + effectbomblist[i].getXY().x + " effect bomb y: " + effectbomblist[i].getXY().y);
-                            if (effectbomblist.length > 0){
-                                effectbomblist[Bomb_index][i].explode(counter);
-                            }
-                            //wait for 1 second before clearing the effect bomb
-                            counter++;
-                        }
-                    }
+                    Bomb.detectCollision(MapObstacle);
 
-
+                    //console.log(Bomb.checkCollision(MapObstacle));
+                    //console.log(Bomb.PassAreaBomb(0).getXY(), Bomb.PassAreaBomb(1).getXY(), Bomb.PassAreaBomb(2).getXY(), Bomb.PassAreaBomb(3).getXY());
+                    (Bomb.PassAreaBomb(0)).draw();
+                    (Bomb.PassAreaBomb(1)).draw();
+                    (Bomb.PassAreaBomb(2)).draw();
+                    (Bomb.PassAreaBomb(3)).draw();
+                 
                     setTimeout(() => {
                         bomblist = bomblist.filter(bomb => bomb !== Bomb);
                     }, 1000);
@@ -429,6 +421,7 @@
 
             //const {x, y} = gem.getXY();
             gemlist.forEach(gem => {
+                let {x, y} = gem.getXY();
                 if (player.getBoundingBox().isPointInBox(x, y)){
                     collectedGems++;
                     gem.reset();
@@ -440,31 +433,6 @@
                     sounds.collect.play();
                 }
             });
-            
-
-            /* Clear the screen */
-            context.clearRect(0, 0, cv.width, cv.height);
-
-            /* Draw the sprites */
-            gemlist.forEach(gem => gem.draw());;
-            fires.forEach(fire => fire.draw());
-            MapObstacle.forEach(Obstacle => Obstacle.draw());
-            MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
-            bomblist.forEach(Bomb => Bomb.draw());
-
-            if (effectbomblist.length > 0){
-                for (let i=0; i<effectbomblist.length; i++){
-                    for (let j=0; j<4; j++){
-                        effectbomblist[i][j].draw();
-                    }
-                }
-            }
-
-            //bomb.draw();
-            player.draw();
-            //console.log(player.getXY());
-            
-            //effectbomblist=[];
 
             /* Process the next frame */
             requestAnimationFrame(doFrame);
@@ -503,22 +471,6 @@
                     
                     //create new bomb at player's position and append to bomblist
                     bomblist.push(Bomb(context, x, y));
-                    
-                    //create 4 bombs around the bomb
-                    length = effectbomblist.length;
-                    effectbomblist.push([Bomb(context, x-32, y),Bomb(context, x+32, y),Bomb(context, x, y-32),Bomb(context, x, y+32)]);
-
-                    //timeout 1 second before clearing the bomb
-                    setTimeout(() => {
-                        console.log("I am clearing the effect bomb!");
-                        bomblist.splice((bomblist.length-1), 1);
-                        effectbomblist.splice((length), 1);
-                    }, 2001);
-                    
-                    //effectbomblist.push(Bomb(context, x-32, y));
-                    //effectbomblist.push(Bomb(context, x+32, y));
-                    //effectbomblist.push(Bomb(context, x, y-32));
-                    //effectbomblist.push(Bomb(context, x, y+32));
                 }
 
             });

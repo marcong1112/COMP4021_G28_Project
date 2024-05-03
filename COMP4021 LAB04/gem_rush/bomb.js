@@ -2,13 +2,13 @@ const Bomb = function(ctx, x, y) {
 
     const sequences = {
         normal:  { x: 0, y:  48, width: 16, height: 16, count: 2, timing: 100, loop: true },
-        explode: { x: 32, y:  96, width: 16, height: 16, count: 4, timing: 100, loop: false },
+        explode: { x: 112, y:  176, width: 16, height: 16, count: 4, timing: 100, loop: false },
 
-        explodeUp: { x: 32, y:  64, width: 16, height: 16, count: 4, timing: 100, loop: false },
-        explodeDown: { x: 32, y:  128, width: 16, height: 16, count: 4, timing: 100, loop: false },
-        explodeLeft: { x: 0, y:  96, width: 16, height: 16, count: 4, timing: 100, loop: false },
-        explodeRight: { x: 64, y:  96, width: 16, height: 16, count: 4, timing: 100, loop: false },
-        explodeCentre: { x: 32, y:  96, width: 16, height: 16, count: 4, timing: 100, loop: false },
+        explodeUp: { x: 112, y:  160, width: 16, height: 16, count: 4, timing: 100, loop: false },
+        explodeDown: { x: 112, y:  192, width: 16, height: 16, count: 4, timing: 100, loop: false },
+        explodeLeft: { x: 96, y:  176, width: 16, height: 16, count: 4, timing: 100, loop: false },
+        explodeRight: { x: 128, y:  176, width: 16, height: 16, count: 4, timing: 100, loop: false },
+        explodeCentre: { x: 112, y:  176, width: 16, height: 16, count: 4, timing: 100, loop: false },
 
 
         //a transparent sprite for the bomb
@@ -17,6 +17,22 @@ const Bomb = function(ctx, x, y) {
 
     // This is the sprite object of the gem created from the Sprite module.
     const sprite = Sprite(ctx, x, y);
+
+    const areaBomb=[Sprite(ctx, x, y-32)
+        ,Sprite(ctx, x, y+32)
+        ,Sprite(ctx, x-32, y)
+        ,Sprite(ctx, x+32, y)]
+
+    for(i=0;i<4;i++){
+        areaBomb[i].setSequence(sequences.explode)
+            .setScale(2)
+            .setShadowScale({ x: 0, y: 0 })
+            .useSheet("bombspritesheet.png");
+    }
+    areaBomb[0].setSequence(sequences.explodeUp);
+    areaBomb[1].setSequence(sequences.explodeDown);
+    areaBomb[2].setSequence(sequences.explodeLeft);
+    areaBomb[3].setSequence(sequences.explodeRight);
 
     // The sprite object is configured for the gem sprite here.
     sprite.setSequence(sequences.normal)
@@ -29,14 +45,7 @@ const Bomb = function(ctx, x, y) {
 
     //**TODO**/
     const explode = function(explodeCode) {
-        console.log("Bomb exploded");
-        //sprite.setSequence(sequences.explode);
-        //show the explosion animation by explodeCode, 1:centre 2:up 3:down 4:left 5:right
 
-        console.log("explodeCode: " + explodeCode);
-
-        //set enum for explodeCode
-        
         switch(explodeCode){
             case 1:
                 sprite.setSequence(sequences.explodeCentre);
@@ -79,8 +88,48 @@ const Bomb = function(ctx, x, y) {
         return now - birthTime;
     };
 
+    const PassAreaBomb = function(num){
+        return areaBomb[num];
+    }
+
+    const detectCollision = function(obstacles) {
+        // Get the bounding box of the bomb
+        const bombBox = sprite.getBoundingBox();
+    
+        for (let obstacle of obstacles) {
+            // Get the bounding box of the current obstacle
+            const obstacleBox = obstacle.getBoundingBox();
+    
+            // Check if the bounding boxes intersect
+            if (bombBox.intersect(obstacleBox)) {
+                // If they do, destroy the obstacle
+                obstacle.destroy();
+                return true;
+            }
+    
+            // Check for collision with areaBomb
+            for(let i = 0; i < areaBomb.length; i++) {
+                const areaBombBox = areaBomb[i].getSmallBox(4);
+                if (areaBombBox.intersect(obstacleBox)) {
+                    // If they do, destroy the obstacle
+                    obstacle.destroy();
+                    return true;
+                }
+            }
+        }
+    
+        return false;
+    };
+    
+  
+    
+
+
+
     // The methods are returned as an object here.
     return {
+        detectCollision: detectCollision,
+        PassAreaBomb: PassAreaBomb,
         clear: clear,
         setSequence: sprite.setSequence,
         explode: explode,
@@ -89,6 +138,7 @@ const Bomb = function(ctx, x, y) {
         getAge: getAge,
         place, place,
         getBoundingBox: sprite.getBoundingBox,
+        getSmallBox: sprite.getSmallBox,
         draw: sprite.draw,
         update: sprite.update
     };

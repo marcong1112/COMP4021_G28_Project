@@ -105,6 +105,21 @@ const Sprite = function(ctx, x, y) {
         return BoundingBox(ctx, top, left, bottom, right);
     };
 
+    const getSmallBox = function(num) {
+        /* Get the display size of the sprite */
+        const size = getDisplaySize();
+
+        /* Find the box coordinates */
+        const top = y - size.height / num;
+        const left = x - size.width / num;
+        const bottom = y + size.height / num;
+        const right = x + size.width / num;
+
+        return BoundingBox(ctx, top, left, bottom, right);
+    };
+
+
+
     // This function draws shadow underneath the sprite.
     const drawShadow = function() {
         /* Save the settings */
@@ -206,6 +221,7 @@ const Sprite = function(ctx, x, y) {
         setShadowScale: setShadowScale,
         getDisplaySize: getDisplaySize,
         getBoundingBox: getBoundingBox,
+        getSmallBox: getSmallBox,
         getHeight: getHeight,
         isReady: isReady,
         draw: draw,
