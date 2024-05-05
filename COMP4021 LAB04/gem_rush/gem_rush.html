@@ -98,6 +98,12 @@
     <script src="Obstacle.js"></script>
     <script src="EmptyObstacle.js"></script>
     <script src="Bomb.js"></script>
+    <script src="/socket.io/socket.io.min.js"></script>
+    <script src="scripts/socket.js"></script>
+    <script src="scripts/avatar.js"></script>
+    <script src="scripts/ui.js"></script>
+    <script src="scripts/registration.js"></script>
+    <script src="scripts/authentication.js"></script>
     <script>
     $(function() {
         /* Get the canvas and 2D context */
@@ -450,6 +456,7 @@
                 //console.log(event.keyCode);
                 if (event.keyCode == 37) {
                     player.move(1);
+
                 } else if (event.keyCode == 38) {
                     player.move(2);
                 } else if (event.keyCode == 39) {
