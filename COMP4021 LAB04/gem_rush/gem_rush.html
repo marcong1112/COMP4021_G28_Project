@@ -10,12 +10,12 @@
     #game-container {
         position: relative;
     }
-    canvas, #counter, #game-start, #game-over {
+    canvas, #counter, #game-start, #game-over{
         position: absolute;
         top: 0px;
         left: 0px;
     }
-    canvas, #game-start, #game-over {
+    canvas, #game-start, #game-over{
         border: 1px solid gray;
         width: 992px;
         height: 416px;
@@ -24,7 +24,7 @@
         background: url(MinefieldBG.png);
         background-size: cover;
     }
-    #game-start, #game-over {
+    #game-start, #game-over{
         background: rgba(1, 1, 1, 0.8);
     }
     #counter text {
@@ -87,13 +87,31 @@
                     <stop offset="1" stop-color="red" />
                 </linearGradient>
             </defs>
-            <text x="50%" y="50%">
-                Time's up! You have collected
+            <text x="50%" y="30%">
+                Game's Over!
                 <tspan id="final-gems">0</tspan>
-                gem(s).
             </text>
+
+            <!--Show scores and rankings of players-->
+            <text x="50%" y="40%">
+                Scores:
+            </text>
+            <text x="50%" y="50%">
+                Player 1: 
+                <tspan id="player1-score">0</tspan>
+            </text>
+            <text x="50%" y="60%">
+                Player 2: 
+                <tspan id="player2-score">0</tspan>
+            </text>
+
+            <text x="50%" y="70%">
+                The winner is:
+                <tspan id="winner">name</tspan>
+                 !
         </svg>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="bounding_box.js"></script>
@@ -105,6 +123,8 @@
     <script src="EmptyObstacle.js"></script>
     <script src="Bomb.js"></script>
     <script>
+
+    
     $(function() {
         /* Get the canvas and 2D context */
         const cv = $("canvas").get(0);
@@ -117,7 +137,7 @@
             gameover: new Audio("gameover.mp3")
         };
 
-        const totalGameTime = 20;   // Total game time in seconds
+        const totalGameTime = 2;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
 
@@ -370,6 +390,7 @@
             if (timeRemaining <= 0) {
                 $(document).off("keydown");
                 $(document).off("keyup");
+
                 $("#game-over").show();
                 $("#final-gems").text(collectedGems);
                 sounds.background.pause();
@@ -447,7 +468,7 @@
             /* Process the next frame */
             requestAnimationFrame(doFrame);
         }
-
+         
         /* Handle the start of the game */
         $("#game-start").on("click", function() {
             /* Hide the start screen */
@@ -507,8 +528,6 @@
             });
 
             /* Start the game */
-            //console.log(player.getXY());
-            //gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
     });
