@@ -9,6 +9,8 @@ const PlayerSet = (function () {
     MapEmptyObstacle1=null;
     let bomblist1=[];
     ctx1=null;
+    p1Score=0;
+    p2Score=0;
 
     async function init() {
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -58,10 +60,10 @@ const PlayerSet = (function () {
     const setBomb = function (playerNum) {
         if(playerNum==1){
             let {x,y}=player1.getXY();
-            bomblist1.push(Bomb(ctx1, x, y));
+            bomblist1.push(Bomb(ctx1, x, y,playerNum));
         }else{
             let {x,y}=player2.getXY();
-            bomblist1.push(Bomb(ctx1, x, y));
+            bomblist1.push(Bomb(ctx1, x, y,playerNum));
         }
     }
     const getbomblist = function(){
@@ -70,7 +72,20 @@ const PlayerSet = (function () {
     const removeBomb = function(Bomb) {
         bomblist1 = bomblist1.filter(bomb => bomb !== Bomb);
     };
-      
+    const addScore = function(playerNum){
+        if(playerNum==1){
+            p1Score++;
+        }else{
+            p2Score++;
+        }
+    }
+    const getScore = function(playerNum){
+        if(playerNum==1){
+            return p1Score;
+        }else{
+            return p2Score;
+        }
+    }      
 
     
   
@@ -153,6 +168,8 @@ const PlayerSet = (function () {
         removeBomb,
       setMapObstacle,
       createplayer,
+        addScore,
+        getScore,
       getp1,
       getp2,
       setplayer1,

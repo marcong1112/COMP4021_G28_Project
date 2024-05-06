@@ -1,4 +1,4 @@
-const Bomb = function(ctx, x, y) {
+const Bomb = function(ctx, x, y,player) {
 
     const sequences = {
         normal:  { x: 0, y:  48, width: 16, height: 16, count: 2, timing: 100, loop: true },
@@ -14,6 +14,7 @@ const Bomb = function(ctx, x, y) {
         //a transparent sprite for the bomb
         clear: { x: 0, y:  0, width: 0, height: 0, count: 1, timing: 100, loop: false },
     };
+    const playerNum=player;
 
     // This is the sprite object of the gem created from the Sprite module.
     const sprite = Sprite(ctx, x, y);
@@ -91,6 +92,9 @@ const Bomb = function(ctx, x, y) {
     const PassAreaBomb = function(num){
         return areaBomb[num];
     }
+    const getOwnPlayer = function(){
+        return playerNum;
+    }
 
     const detectCollision = function(obstacles) {
         // Get the bounding box of the bomb
@@ -117,8 +121,6 @@ const Bomb = function(ctx, x, y) {
                 }
             }
         }
-
-        
     
         return false;
     };
@@ -132,6 +134,7 @@ const Bomb = function(ctx, x, y) {
     return {
         detectCollision: detectCollision,
         PassAreaBomb: PassAreaBomb,
+        getOwnPlayer: getOwnPlayer,
         clear: clear,
         setSequence: sprite.setSequence,
         explode: explode,
