@@ -137,7 +137,9 @@
             gameover: new Audio("gameover.mp3")
         };
 
-        const totalGameTime = 2;   // Total game time in seconds
+        let gameoverflag = false;
+
+        const totalGameTime = 10;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
 
@@ -387,7 +389,7 @@
 
             /* TODO */ /* DONE */
             /* Handle the game over situation here */
-            if (timeRemaining <= 0) {
+            if (timeRemaining <= 0 || gameoverflag) {
                 $(document).off("keydown");
                 $(document).off("keyup");
 
@@ -432,17 +434,24 @@
   
                     Bomb_index = bomblist.indexOf(Bomb);
                     Bomb.explode(1);
+                    
                     if (Bomb.detectCollision(MapObstacle)){
                         collectedGems++;
                     };
-
-                    //console.log(Bomb.checkCollision(MapObstacle));
-                    //console.log(Bomb.PassAreaBomb(0).getXY(), Bomb.PassAreaBomb(1).getXY(), Bomb.PassAreaBomb(2).getXY(), Bomb.PassAreaBomb(3).getXY());
+                    
                     (Bomb.PassAreaBomb(0)).draw();
                     (Bomb.PassAreaBomb(1)).draw();
                     (Bomb.PassAreaBomb(2)).draw();
                     (Bomb.PassAreaBomb(3)).draw();
-                 
+
+                    //detect collision with player
+                    if (Bomb.detectCollisionWithPlayer(player)){
+                        //game overx
+                        gameoverflag = true;
+                        //TODO: add score to opponent player
+                        return;
+                    };
+
                     setTimeout(() => {
                         bomblist = bomblist.filter(bomb => bomb !== Bomb);
                     }, 1000);
@@ -454,7 +463,7 @@
             gemlist.forEach(gem => {
                 let {x, y} = gem.getXY();
                 if (player.getBoundingBox().isPointInBox(x, y)){
-                    collectedGems++;
+                    collectedGems+=5;
                     gem.reset();
                     console.log("collected gem!");
                     //pause collect sound
