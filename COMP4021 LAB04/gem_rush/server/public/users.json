@@ -1,0 +1,42 @@
+{
+ "tony": {
+  "avatar": "Owl",
+  "name": "Tony Lee",
+  "password": "$2b$10$Yxb2fSgA5RFn9Oz9TxjLLuve/GiPXCs2DWVFhyFDr4qz39qglwp8e"
+ },
+ "may": {
+  "avatar": "Rabbit",
+  "name": "May Wong",
+  "password": "$2b$10$gLc3Ri9W6P650EKKbexw6uvirV8Bar7gmvAtMcoMiPiR3rsY50GVu"
+ },
+ "Owl": {
+  "avatar": "Rooster",
+  "name": "123",
+  "hash": "$2b$10$P//x4WmrR2DUsW7z8KsQVe64mzOsANd6NoCUd5x5yzdNRCAjr63Y6"
+ },
+ "aaa": {
+  "avatar": "Hamster",
+  "name": "111",
+  "hash": "$2b$10$5TQCKdR/lalZ0Zva8tRAweW0FA0z3n7eN53WzwJlNVQ0/f0p3UG5a"
+ },
+ "ab1": {
+  "avatar": "Hamster",
+  "name": "ab1",
+  "hash": "$2b$10$gWP5apnMuRSjUllCcv/zYOZf7FYIdC5PRVG9yVatna1Y7m9nsYOiS"
+ },
+ "av1": {
+  "avatar": "Hamster",
+  "name": "av1",
+  "hash": "$2b$10$pgstesN7EWaltGBAFH0WbOGpWVIR2A0LzAVXXPn.0bTmDouD3suZa"
+ },
+ "aaab": {
+  "avatar": "Koala",
+  "name": "aaab",
+  "hash": "$2b$10$UgkIxJZH6aVsqTVjCAtXWe7d2aCnsyojP1w6KSmLOYbEUCIzcx53C"
+ },
+ "aaaa": {
+  "avatar": "Hamster",
+  "name": "aaaa",
+  "hash": "$2b$10$/QNHbozzMEkJ/m3CXYLEeOtOTsl1dFCoyKqXx.G7QgYAPVMcYKV4O"
+ }
+}

@@ -1,44 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>The Chatroom</title>
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
+    <title>Collect the Gems!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet">
+    <style>
+    body {
+        font-family: "Press Start 2P", sans-serif;
+    }
+    #game-container {
+        position: relative;
+    }
+    canvas, #counter, #game-start, #game-over {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+    canvas, #game-start, #game-over {
+        border: 1px solid gray;
+        width: 992px;
+        height: 416px;
+    }
+    canvas {
+        background: url(MinefieldBG.png);
+        background-size: cover;
+    }
+    #game-start, #game-over {
+        background: rgba(1, 1, 1, 0.8);
+    }
+    #counter text {
+        font-size: 130%;
+        fill: white;
+        stroke: black;
+        stroke-width: 1px;
+    }
+    #game-start text {
+        font-size: 150%;
+        fill: white;
+        text-anchor: middle;
+    }
+    #game-start #game-title {
+        font-size: 400%;
+        fill: url(#title-fill);
+        stroke: black;
+    }
+    #game-over text {
+        font-size: 120%;
+        fill: url(#game-over-fill);
+        text-anchor: middle;
+    }
+    </style>
 </head>
 <body>
-    <div id="container" class="col">
-        <div id="header" class="row">
-            <div id="title">The Chatroom
-                <span class="material-icons">chat</span>
-            </div>
-
-            <div class="spacer-grow"></div>
-
-            <div id="user-panel" class="row">
-                <div class="field-content row shadow">
-                    <span class="user-avatar"></span>
-                    <span class="user-name">-</span>
-                </div>
-                <button id="signout-button" class="icon"><span class="material-icons">logout</span></button>
-            </div>
-        </div>
-
-        <div id="main-panel" class="row">
-            <div id="chat-panel" class="col">
-                <div id="chat-area" class="col"></div>
-                <i><div id = "typing-status"></div></i>
-                <form id="chat-input-form" autocomplete="off">
-                    <input id="chat-input" placeholder="Enter your message"></input>
-                </form>
-            </div>
-
-            <div id="online-users-panel" class="col">
-                <div id="online-users-area" class="col"></div>
-            </div>
-        </div>
-    </div>
-
     <div id="signin-overlay" class="overlay row">
         <div class="content shadow row">
             <form id="signin-form" class="col">
@@ -58,9 +70,7 @@
                 <div class="caption">OR, REGISTER IF YOU DO NOT HAVE ONE</div>
                 <div class="spacer-0"></div>
                 <input id="register-username" maxlength="10" placeholder="Enter your username"></input>
-                <select id="register-avatar">
-                    <option value="">Select your avatar</option>
-                </select>
+            
                 <input id="register-name" maxlength="16" placeholder="Enter your name"></input>
                 <input id="register-password" type="password" placeholder="Enter your password"></input>
                 <input id="register-confirm" type="password" placeholder="Enter your password again"></input>
@@ -71,28 +81,556 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.min.js"></script>
-    <script src="scripts/socket.js"></script>
-    <script src="scripts/avatar.js"></script>
-    <script src="scripts/ui.js"></script>
-    <script src="scripts/registration.js"></script>
-    <script src="scripts/authentication.js"></script>
+
+
+
+    <div id="game-container">
+        <canvas width="992px" height="416px"></canvas>
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="counter">
+            <text x="10" y="35">
+                TIME:<tspan id="time-remaining">20</tspan>
+            </text>
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="counter">
+            <text x="10" y="70">
+                Score:<tspan id="score-total">0</tspan>
+            </text>
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="game-start">
+            <defs>
+                <linearGradient id="title-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0.2" stop-color="red" />
+                    <stop offset="0.4" stop-color="yellow" />
+                    <stop offset="0.6" stop-color="green" />
+                    <stop offset="0.8" stop-color="purple" />
+                </linearGradient>
+            </defs>
+            <text id="game-title" x="50%" y="45%">GEM RUSH!</text>
+            <text x="50%" y="60%">Click here to start the game</text>
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="game-over" style="display: none">
+            <defs>
+                <linearGradient id="game-over-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="red" />
+                    <stop offset="0.5" stop-color="yellow" />
+                    <stop offset="1" stop-color="red" />
+                </linearGradient>
+            </defs>
+            <text x="50%" y="50%">
+                Time's up! You have collected
+                <tspan id="final-gems">0</tspan>
+                gem(s).
+            </text>
+        </svg>
+
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="bounding_box.js"></script>
+    <script src="sprite.js"></script>
+    <script src="player.js"></script>
+    <script src="gem.js"></script>
+    <script src="fire.js"></script>
+    <script src="Obstacle.js"></script>
+    <script src="EmptyObstacle.js"></script>
+    <script src="Bomb.js"></script>
+    <script src="../socket.io/socket.io.min.js"></script>
+    <script src="socket.js"></script>
+    <script src="avatar.js"></script>
+    <script src="ui.js"></script>
+    <script src="registration.js"></script>
+    <script src="authentication.js"></script>
+    <script src="playerSet.js"></script>
     <script>
     $(document).ready(function() {
-        // Initialize the UI
-        UI.initialize();
 
-        // Validate the signin
+         // Validate the signin
+        //temp use
         Authentication.validate(
             () => {
-                SignInForm.hide();
-                UserPanel.update(Authentication.getUser());
-                UserPanel.show();
-
+                $("#signin-overlay").hide();                
                 Socket.connect();
             },
-            () => { SignInForm.show(); }
+            () => { }
         );
+        //temp use
+        $("#signin-form").on("submit", (e) => {
+            e.preventDefault();
+            const username = $("#signin-username").val().trim();
+            const password = $("#signin-password").val().trim();
+            Authentication.signin(username, password,
+            async () => {
+                    $("#signin-overlay").hide();
+                    Socket.connect();
+                    PlayerSet.init();
+                    await new Promise((resolve) => setTimeout(resolve, 4000));
+                },
+                (error) => { $("#signin-message").text(error); }
+            );
+        });
+    
+
+
+
+        /* Get the canvas and 2D context */
+        const cv = $("canvas").get(0);
+        const context = cv.getContext("2d");
+        var clicked = false;
+
+        /* Create the sounds */
+        const sounds = {
+            background: new Audio("background.mp3"),
+            collect: new Audio("collect.mp3"),
+            gameover: new Audio("gameover.mp3")
+        };
+
+        const totalGameTime = 20;   // Total game time in seconds
+        const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
+        const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
+
+        let gameStartTime = 0;      // The timestamp when the game starts
+        let collectedGems = 0;      // The number of gems collected in the game
+
+        /* Create the game area */
+        //const gameArea = BoundingBox(context, 32, 48, 352, 944);
+        const gameArea = BoundingBox(context, 32, 48, 360, 944);
+
+        /* Create the sprites in the game */
+        //const player = Player(context, 80, 235, gameArea); // The player\
+        PlayerSet.createplayer(context, 80, 235, gameArea,1);
+        PlayerSet.createplayer(context, 912, 235-32-32, gameArea,2);
+        const player1 = PlayerSet.getp1();
+        const player2 = PlayerSet.getp2();
+        
+        const gemcolors = ["green", "red", "yellow", "purple"];
+        let gemlist = [
+            Gem(context, 496, 203, gemcolors[Math.floor(Math.random() * 4)]),
+            Gem(context, 368, 360, gemcolors[Math.floor(Math.random() * 4)]),
+            Gem(context, 624, 75, gemcolors[Math.floor(Math.random() * 4)]),
+        ]
+
+        //create 4 fires at each corner of the game area
+        // const fires = [
+        //     Fire(context, 16, 165),
+        //     Fire(context, 16, 464),
+        //     Fire(context, 838, 165),
+        //     Fire(context, 838, 464)
+        // ]; // The fires */
+        const MapObstacle = [
+            Obstacle(context, 336, 368),
+            Obstacle(context, 336, 304),
+            Obstacle(context, 336, 240),
+            Obstacle(context, 336, 176),
+            Obstacle(context, 336, 112),
+            Obstacle(context, 336, 48),
+
+            Obstacle(context, 304, 368),
+            Obstacle(context, 368, 304),
+            Obstacle(context, 368, 336),
+            Obstacle(context, 400, 368),
+            Obstacle(context, 432, 368),
+
+            Obstacle(context, 624, 48),
+            Obstacle(context, 592, 48),
+            Obstacle(context, 656, 48),
+            Obstacle(context, 688, 48),
+            Obstacle(context, 624, 112),
+            Obstacle(context, 656, 112),
+            Obstacle(context, 592, 112),
+
+            Obstacle(context, 656, 176),
+            Obstacle(context, 656, 240),
+            Obstacle(context, 656, 304),
+            Obstacle(context, 656, 368),
+            Obstacle(context, 656, 432),
+
+            Obstacle(context, 528, 176),
+            Obstacle(context, 464, 176),
+            Obstacle(context, 496, 176),
+            Obstacle(context, 464, 240),
+            Obstacle(context, 496, 240),
+            Obstacle(context, 528, 240),
+
+            Obstacle(context, 496, 144),
+            Obstacle(context, 496, 112),
+            Obstacle(context, 496, 80),
+            Obstacle(context, 496, 48),
+            Obstacle(context, 496, 176),
+            Obstacle(context, 496, 240),
+            Obstacle(context, 496, 272),
+            Obstacle(context, 496, 304),
+            Obstacle(context, 496, 336),
+            Obstacle(context, 496, 368),
+
+            Obstacle(context, 432, 208),
+            Obstacle(context, 368, 208),
+            Obstacle(context, 560, 208),
+            Obstacle(context, 624, 208),
+            
+            Obstacle(context, 560, 176),
+            Obstacle(context, 560, 144),
+            Obstacle(context, 560, 112),
+            Obstacle(context, 560, 80),
+            Obstacle(context, 560, 48),
+            
+            Obstacle(context, 432, 240),
+            Obstacle(context, 432, 272),
+            Obstacle(context, 432, 304),
+            Obstacle(context, 432, 336),
+            Obstacle(context, 400, 304),
+            
+            Obstacle(context, 48, 176),
+            Obstacle(context, 80, 176),
+            Obstacle(context, 112, 176),
+            Obstacle(context, 144, 176),
+            Obstacle(context, 176, 176),
+            Obstacle(context, 208, 176),
+            Obstacle(context, 240, 176),
+            Obstacle(context, 272, 176),
+            Obstacle(context, 304, 176),
+            Obstacle(context, 336, 176),
+            Obstacle(context, 368, 176),
+            Obstacle(context, 400, 176),
+            Obstacle(context, 432, 176),
+            Obstacle(context, 592, 176),
+            Obstacle(context, 624, 176),
+
+            Obstacle(context, 368, 240),
+            Obstacle(context, 400, 240),
+            Obstacle(context, 560, 240),
+            Obstacle(context, 592, 240),
+            Obstacle(context, 624, 240),
+            Obstacle(context, 656, 240),
+            Obstacle(context, 688, 240),
+            Obstacle(context, 720, 240),
+            Obstacle(context, 752, 240),
+            Obstacle(context, 784, 240),
+            Obstacle(context, 816, 240),
+            Obstacle(context, 848, 240),
+            Obstacle(context, 880, 240),
+            Obstacle(context, 912, 240),
+            Obstacle(context, 944, 240),
+
+
+            
+
+
+        ];
+        const MapEmptyObstacle=[
+            EmptyObstacle(context, 80, 80),
+            EmptyObstacle(context, 80, 144),
+            EmptyObstacle(context, 80, 208),
+            EmptyObstacle(context, 80, 272),
+            EmptyObstacle(context, 80, 336),
+    
+            EmptyObstacle(context, 144, 80),
+            EmptyObstacle(context, 144, 144),
+            EmptyObstacle(context, 144, 208),
+            EmptyObstacle(context, 144, 272),
+            EmptyObstacle(context, 144, 336),
+
+            EmptyObstacle(context, 208, 80),
+            EmptyObstacle(context, 208, 144),
+            EmptyObstacle(context, 208, 208),
+            EmptyObstacle(context, 208, 272),
+            EmptyObstacle(context, 208, 336),
+
+            EmptyObstacle(context, 272, 80),
+            EmptyObstacle(context, 272, 144),
+            EmptyObstacle(context, 272, 208),
+            EmptyObstacle(context, 272, 272),
+            EmptyObstacle(context, 272, 336),
+
+            EmptyObstacle(context, 336, 80),
+            EmptyObstacle(context, 336, 144),
+            EmptyObstacle(context, 336, 208),
+            EmptyObstacle(context, 336, 272),
+            EmptyObstacle(context, 336, 336),
+
+            EmptyObstacle(context, 400, 80),
+            EmptyObstacle(context, 400, 144),
+            EmptyObstacle(context, 400, 208),
+            EmptyObstacle(context, 400, 272),
+            EmptyObstacle(context, 400, 336),
+
+            EmptyObstacle(context, 464, 80),
+            EmptyObstacle(context, 464, 144),
+            EmptyObstacle(context, 464, 208),
+            EmptyObstacle(context, 464, 272),
+            EmptyObstacle(context, 464, 336),
+
+            EmptyObstacle(context, 528, 80),
+            EmptyObstacle(context, 528, 144),
+            EmptyObstacle(context, 528, 208),
+            EmptyObstacle(context, 528, 272),
+            EmptyObstacle(context, 528, 336),
+
+            EmptyObstacle(context, 592, 80),
+            EmptyObstacle(context, 592, 144),
+            EmptyObstacle(context, 592, 208),
+            EmptyObstacle(context, 592, 272),
+            EmptyObstacle(context, 592, 336),
+
+            EmptyObstacle(context, 656, 80),
+            EmptyObstacle(context, 656, 144),
+            EmptyObstacle(context, 656, 208),
+            EmptyObstacle(context, 656, 272),
+            EmptyObstacle(context, 656, 336),
+
+            EmptyObstacle(context, 720, 80),
+            EmptyObstacle(context, 720, 144),
+            EmptyObstacle(context, 720, 208),
+            EmptyObstacle(context, 720, 272),
+            EmptyObstacle(context, 720, 336),
+
+            EmptyObstacle(context, 784, 80),
+            EmptyObstacle(context, 784, 144),
+            EmptyObstacle(context, 784, 208),
+            EmptyObstacle(context, 784, 272),
+            EmptyObstacle(context, 784, 336),
+
+            EmptyObstacle(context, 848, 80),
+            EmptyObstacle(context, 848, 144),
+            EmptyObstacle(context, 848, 208),
+            EmptyObstacle(context, 848, 272),
+            EmptyObstacle(context, 848, 336),
+
+            EmptyObstacle(context, 912, 80),
+            EmptyObstacle(context, 912, 144),
+            EmptyObstacle(context, 912, 208),
+            EmptyObstacle(context, 912, 272),
+            EmptyObstacle(context, 912, 336),
+
+            EmptyObstacle(context, 976, 80),
+            EmptyObstacle(context, 976, 144),
+            EmptyObstacle(context, 976, 208),
+            EmptyObstacle(context, 976, 272),
+            EmptyObstacle(context, 976, 336),
+        ];
+
+        //const bomb = Bomb(context, 80, 176);   
+        let bomblist = null;
+        PlayerSet.setMapObstacle(MapObstacle,MapEmptyObstacle,context);  
+
+        //make array of array to store effect bomb, each entry stores 4 bomb effects
+        let effectbomblist =[];
+
+        /* TODO */
+        totalscore = 0;
+
+        /* The main processing of the game */
+        function doFrame(now) {
+            if (gameStartTime == 0) gameStartTime = now;
+            PlayerSet.setnow(now);
+
+            /* Start the background music */
+            sounds.background.loop = true;
+            sounds.background.play();
+
+            /* Update the time remaining */
+            const gameTimeSoFar = now - gameStartTime;
+            const timeRemaining = Math.ceil((totalGameTime * 1000 - gameTimeSoFar) / 1000);
+            $("#time-remaining").text(timeRemaining);
+
+            /* Update the score */
+            $("#score-total").text(collectedGems);
+
+            /* TODO */ /* DONE */
+            /* Handle the game over situation here */
+            if (timeRemaining <= 0) {
+                $(document).off("keydown");
+                $(document).off("keyup");
+                $("#game-over").show();
+                $("#final-gems").text(collectedGems);
+                sounds.background.pause();
+                sounds.collect.pause();
+                sounds.gameover.play();
+                return;
+            }
+
+            /* Update the sprites */
+            //gem.update(now);
+
+
+            //bomb.update(now);
+            //bomblist.forEach(Bomb => Bomb.update(now));
+
+            player1.update(now, MapObstacle, MapEmptyObstacle);
+            player2.update(now, MapObstacle, MapEmptyObstacle);
+            // fires.forEach(fire => fire.update(now));
+
+            /* Clear the screen */
+            context.clearRect(0, 0, cv.width, cv.height);
+
+            /* Draw the sprites */
+            bomblist=PlayerSet.getbomblist();
+            gemlist.forEach(gem => gem.draw());
+            // fires.forEach(fire => fire.draw());
+            MapObstacle.forEach(Obstacle => Obstacle.draw());
+            MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
+            bomblist.forEach(Bomb => Bomb.draw());
+            player1.draw();
+            player2.draw();
+           
+            bomblist.forEach(Bomb => {
+                if (Bomb.getAge(now) > bombMaxAge){
+                    console.log("bomb removed");
+                    //Bomb.clear();
+                    //delay 1 second before removing bomb from bomblist
+                    //get x and y of bomb
+                    let {x, y} = Bomb.getXY();
+
+                    //explode the 4 bombs to get the effect of explosion
+  
+                    Bomb_index = bomblist.indexOf(Bomb);
+                    Bomb.explode(1);
+                    if (Bomb.detectCollision(MapObstacle)){
+                        collectedGems++;
+                    };
+
+                    //console.log(Bomb.checkCollision(MapObstacle));
+                    //console.log(Bomb.PassAreaBomb(0).getXY(), Bomb.PassAreaBomb(1).getXY(), Bomb.PassAreaBomb(2).getXY(), Bomb.PassAreaBomb(3).getXY());
+                    (Bomb.PassAreaBomb(0)).draw();
+                    (Bomb.PassAreaBomb(1)).draw();
+                    (Bomb.PassAreaBomb(2)).draw();
+                    (Bomb.PassAreaBomb(3)).draw();
+                 
+                    setTimeout(() => {
+                        PlayerSet.removeBomb(Bomb);
+                    }, 1000);
+                }
+            });
+            
+        
+            //const {x, y} = gem.getXY();
+            gemlist.forEach(gem => {
+                let {x, y} = gem.getXY();
+                if (player1.getBoundingBox().isPointInBox(x, y)){
+                    collectedGems++;
+                    gem.reset();
+                    console.log("collected gem!");
+                    //pause collect sound
+                    sounds.collect.pause();
+                    //set collect sound to 0
+                    sounds.collect.currentTime = 0;
+                    sounds.collect.play();
+                }
+                if (player2.getBoundingBox().isPointInBox(x, y)){
+                    collectedGems++;
+                    gem.reset();
+                    console.log("collected gem!");
+                    //pause collect sound
+                    sounds.collect.pause();
+                    //set collect sound to 0
+                    sounds.collect.currentTime = 0;
+                    sounds.collect.play();
+                }
+            });
+
+
+            /* Process the next frame */
+            requestAnimationFrame(doFrame);
+        }
+
+        /* Handle the start of the game */
+        $("#game-start").on("click", function() {
+            /* Hide the start screen */
+            $("#game-start").hide();
+
+            /* Handle the keydown of arrow keys and spacebar */
+            $(document).on("keydown", function(event) {
+                console.log("key down")
+                Socket.MoveRequest({
+                player: Socket.getSessionPlayer(),
+                coordinates: Socket.getSessionPlayer() == 1? player1.getXY():player2.getXY(),
+                event: "keydown",
+                keyCode: event.keyCode
+                });
+                console.log("player: " + Socket.getSessionPlayer());
+                if(Socket.getSessionPlayer() == 1){
+                if (event.keyCode == 37) {
+                    player1.move(1);
+                } else if (event.keyCode == 38) {
+                    player1.move(2);
+                } else if (event.keyCode == 39) {
+                    player1.move(3);
+                } else if (event.keyCode == 40) {
+                    player1.move(4);
+                }
+                
+                
+                if (event.keyCode == 65){
+                    Socket.BombRequest({
+                    player: Socket.getSessionPlayer(),
+                    ctx: context,
+                    event: "keydown",
+                    keyCode: event.keyCode
+                    });
+                    let {x, y} = player1.getXY();
+                    bomblist.push(Bomb(context, x, y));
+                }
+            }else{
+                if (event.keyCode == 37) {
+                    player2.move(1);
+                } else if (event.keyCode == 38) {
+                    player2.move(2);
+                } else if (event.keyCode == 39) {
+                    player2.move(3);
+                } else if (event.keyCode == 40) {
+                    player2.move(4);
+                }
+                
+                //if "a" is pressed, bomb is placed at player's position
+                if (event.keyCode == 65){
+                    Socket.BombRequest({
+                    player: Socket.getSessionPlayer(),
+                    ctx: context,
+                    event: "keydown",
+                    keyCode: event.keyCode
+                    });
+                    //get current player position
+                    let {x, y} = player2.getXY();
+                    bomblist.push(Bomb(context, x, y));
+                }
+
+            }
+
+            });
+
+            /* Handle the keyup of arrow keys and spacebar */
+            $(document).on("keyup", function(event) {
+                Socket.stopping({
+                player: Socket.getSessionPlayer(),
+                coordinates: Socket.getSessionPlayer() == 1? player1.getXY():player2.getXY(),
+                event: "keyup",
+                keyCode: event.keyCode
+                });
+                if (event.keyCode == 37) {
+                    player1.stop(1);
+                    player2.stop(1);
+                } else if (event.keyCode == 38) {
+                    player1.stop(2);
+                    player2.stop(2);
+                } else if (event.keyCode == 39) {
+                    player1.stop(3);
+                    player2.stop(3);
+                } else if (event.keyCode == 40) {
+                    player1.stop(4);
+                    player2.stop(4);
+                }
+    
+            });
+
+            /* Start the game */
+            //console.log(player.getXY());
+            //gem.randomize(gameArea);
+            requestAnimationFrame(doFrame);
+        });
     });
     </script>
 </body>
