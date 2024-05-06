@@ -195,6 +195,10 @@
 
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
+        let lastBombPlacedTimeForP1 = 0;
+        let lastBombPlacedTimeForP2 = 0;
+        let P1CheatCode=false;
+        let P2CheatCode=false;
 
         /* Create the game area */
         //const gameArea = BoundingBox(context, 32, 48, 352, 944);
@@ -542,17 +546,25 @@
                     player1.move(4);
                 }
                 
-                
-                if (event.keyCode == 65){
-                    Socket.BombRequest({
-                    player: Socket.getSessionPlayer(),
-                    ctx: context,
-                    event: "keydown",
-                    keyCode: event.keyCode
-                    });
-                    let {x, y} = player1.getXY();
-                    bomblist.push(Bomb(context, x, y,1));
+                let BombcurrentTime=performance.now();
+                if(BombcurrentTime - lastBombPlacedTimeForP1 >= 3000 || P1CheatCode==true){
+                    if (event.keyCode == 65){
+                        Socket.BombRequest({
+                        player: Socket.getSessionPlayer(),
+                        ctx: context,
+                        event: "keydown",
+                        keyCode: event.keyCode
+                        });
+                        lastBombPlacedTimeForP1 = BombcurrentTime;
+                        let {x, y} = player1.getXY();
+                        bomblist.push(Bomb(context, x, y,1));
+                    }
                 }
+
+                if(event.keyCode == 32){
+                    P1CheatCode = true;
+                }
+
             }else{
                 if (event.keyCode == 37) {
                     player2.move(1);
@@ -564,17 +576,24 @@
                     player2.move(4);
                 }
                 
-                //if "a" is pressed, bomb is placed at player's position
-                if (event.keyCode == 65){
-                    Socket.BombRequest({
-                    player: Socket.getSessionPlayer(),
-                    ctx: context,
-                    event: "keydown",
-                    keyCode: event.keyCode
-                    });
-                    //get current player position
+                let BombcurrentTime=performance.now();
+                if (BombcurrentTime - lastBombPlacedTimeForP2 >= 3000 || P2CheatCode==true){
+                        if (event.keyCode == 65){
+                            Socket.BombRequest({
+                            player: Socket.getSessionPlayer(),
+                            ctx: context,
+                            event: "keydown",
+                            keyCode: event.keyCode
+                            });
+                            lastBombPlacedTimeForP2 = BombcurrentTime;
                     let {x, y} = player2.getXY();
                     bomblist.push(Bomb(context, x, y,2));
+
+                    
+                }
+                }
+                if(event.keyCode == 32){
+                    P2CheatCode = true;
                 }
 
             }
