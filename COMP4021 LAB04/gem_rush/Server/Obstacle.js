@@ -41,6 +41,7 @@ const Obstacle = function(ctx, x, y) {
         setColor: setColor,
         getAge: getAge,
         getBoundingBox: sprite.getBoundingBox,
+        getSmallBox: sprite.getSmallBox,
         draw: sprite.draw,
         update: sprite.update
     };
