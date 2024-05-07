@@ -10,12 +10,12 @@
     #game-container {
         position: relative;
     }
-    canvas, #counter, #game-start, #game-over {
+    canvas, #counter, #game-start, #game-over{
         position: absolute;
         top: 0px;
         left: 0px;
     }
-    canvas, #game-start, #game-over {
+    canvas, #game-start, #game-over{
         border: 1px solid gray;
         width: 992px;
         height: 416px;
@@ -24,7 +24,7 @@
         background: url(MinefieldBG.png);
         background-size: cover;
     }
-    #game-start, #game-over {
+    #game-start, #game-over{
         background: rgba(1, 1, 1, 0.8);
     }
     #counter text {
@@ -87,13 +87,31 @@
                     <stop offset="1" stop-color="red" />
                 </linearGradient>
             </defs>
-            <text x="50%" y="50%">
-                Time's up! You have collected
+            <text x="50%" y="30%">
+                Game's Over!
                 <tspan id="final-gems">0</tspan>
-                gem(s).
             </text>
+
+            <!--Show scores and rankings of players-->
+            <text x="50%" y="40%">
+                Scores:
+            </text>
+            <text x="50%" y="50%">
+                Player 1: 
+                <tspan id="player1-score">0</tspan>
+            </text>
+            <text x="50%" y="60%">
+                Player 2: 
+                <tspan id="player2-score">0</tspan>
+            </text>
+
+            <text x="50%" y="70%">
+                The winner is:
+                <tspan id="winner">name</tspan>
+                 !
         </svg>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="bounding_box.js"></script>
@@ -104,13 +122,9 @@
     <script src="Obstacle.js"></script>
     <script src="EmptyObstacle.js"></script>
     <script src="Bomb.js"></script>
-    <script src="/socket.io/socket.io.min.js"></script>
-    <script src="server/public/scripts/socket.js"></script>
-    <script src="server/public/scripts/avatar.js"></script>
-    <script src="server/public/scripts/ui.js"></script>
-    <script src="server/public/scripts/registration.js"></script>
-    <script src="server/public/scripts/authentication.js"></script>
     <script>
+
+    
     $(function() {
         /* Get the canvas and 2D context */
         const cv = $("canvas").get(0);
@@ -123,7 +137,9 @@
             gameover: new Audio("gameover.mp3")
         };
 
-        const totalGameTime = 20;   // Total game time in seconds
+        let gameoverflag = false;
+
+        const totalGameTime = 10;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
 
@@ -373,9 +389,10 @@
 
             /* TODO */ /* DONE */
             /* Handle the game over situation here */
-            if (timeRemaining <= 0) {
+            if (timeRemaining <= 0 || gameoverflag) {
                 $(document).off("keydown");
                 $(document).off("keyup");
+
                 $("#game-over").show();
                 $("#final-gems").text(collectedGems);
                 sounds.background.pause();
@@ -417,17 +434,24 @@
   
                     Bomb_index = bomblist.indexOf(Bomb);
                     Bomb.explode(1);
+                    
                     if (Bomb.detectCollision(MapObstacle)){
                         collectedGems++;
                     };
-
-                    //console.log(Bomb.checkCollision(MapObstacle));
-                    //console.log(Bomb.PassAreaBomb(0).getXY(), Bomb.PassAreaBomb(1).getXY(), Bomb.PassAreaBomb(2).getXY(), Bomb.PassAreaBomb(3).getXY());
+                    
                     (Bomb.PassAreaBomb(0)).draw();
                     (Bomb.PassAreaBomb(1)).draw();
                     (Bomb.PassAreaBomb(2)).draw();
                     (Bomb.PassAreaBomb(3)).draw();
-                 
+
+                    //detect collision with player
+                    if (Bomb.detectCollisionWithPlayer(player)){
+                        //game overx
+                        gameoverflag = true;
+                        //TODO: add score to opponent player
+                        return;
+                    };
+
                     setTimeout(() => {
                         bomblist = bomblist.filter(bomb => bomb !== Bomb);
                     }, 1000);
@@ -439,7 +463,7 @@
             gemlist.forEach(gem => {
                 let {x, y} = gem.getXY();
                 if (player.getBoundingBox().isPointInBox(x, y)){
-                    collectedGems++;
+                    collectedGems+=5;
                     gem.reset();
                     console.log("collected gem!");
                     //pause collect sound
@@ -453,7 +477,7 @@
             /* Process the next frame */
             requestAnimationFrame(doFrame);
         }
-
+         
         /* Handle the start of the game */
         $("#game-start").on("click", function() {
             /* Hide the start screen */
@@ -513,8 +537,6 @@
             });
 
             /* Start the game */
-            //console.log(player.getXY());
-            //gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
     });

@@ -124,7 +124,22 @@ const Bomb = function(ctx, x, y,player) {
     
         return false;
     };
-    
+        //detect collision with player
+        const detectCollisionWithPlayer = function(player) {
+            // Get the bounding box of the bomb
+            const bombBox = sprite.getBoundingBox();
+        
+            // Get the bounding box of the player
+            const playerBox = player.getBoundingBox();
+        
+            // Check if the bounding boxes intersect
+            if (bombBox.intersect(playerBox)) {
+                // If they do, destroy the player
+                return true;
+            }else{
+                return false;
+            }
+        };
   
     
 
@@ -132,6 +147,7 @@ const Bomb = function(ctx, x, y,player) {
 
     // The methods are returned as an object here.
     return {
+        detectCollisionWithPlayer: detectCollisionWithPlayer,
         detectCollision: detectCollision,
         PassAreaBomb: PassAreaBomb,
         getOwnPlayer: getOwnPlayer,
