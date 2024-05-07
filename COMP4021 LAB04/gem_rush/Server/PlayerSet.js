@@ -36,15 +36,12 @@ const PlayerSet = (function () {
       data = {
         1: player1.getXY(),
         2: player2.getXY(),
-        obj: obj.getXY(),
       };
-      Socket.getcoordinates(data);
-      console.log("movement data:", data);
+      Socket.getPos(data);
     }
   
     const setplayer1 = function (x, y) {
       player1.setXY(x, y);
-      console.log("set player1");
       movement();
     };
     const setplayer2 = function (x, y) {
@@ -72,11 +69,13 @@ const PlayerSet = (function () {
     const removeBomb = function(Bomb) {
         bomblist1 = bomblist1.filter(bomb => bomb !== Bomb);
     };
-    const addScore = function(playerNum){
+    const addScore = function(playerNum,score){
         if(playerNum==1){
-            p1Score++;
+           console.log("p1score",p1Score);
+            p1Score=p1Score+score;
         }else{
-            p2Score++;
+            console.log("p2score",p2Score);
+            p2Score=p2Score+score;
         }
     }
     const getScore = function(playerNum){
@@ -89,7 +88,7 @@ const PlayerSet = (function () {
 
     
   
-    const setp1moving_direction = function (direction) {
+    const setp1Dir = function (direction) {
       switch (direction) {
         case 37: p1_dir = 1; break;
         case 38: p1_dir = 2; break;
@@ -104,7 +103,7 @@ const PlayerSet = (function () {
   
     }
   
-    const setp2moving_direction = function (direction) {
+    const setp2Dir = function (direction) {
       switch (direction) {
         case 37: p2_dir = 1; break;
         case 38: p2_dir = 2; break;
@@ -118,11 +117,11 @@ const PlayerSet = (function () {
       }
     }
   
-    const getp1moving_direction = function () {
+    const getp1Dir = function () {
       return p1_dir;
     } 
   
-    const getp2moving_direction = function () {
+    const getp2Dir = function () {
       return p2_dir;
     }
   
@@ -175,10 +174,10 @@ const PlayerSet = (function () {
       setplayer1,
       setplayer2,
       movement,
-      setp1moving_direction,
-      setp2moving_direction,
-      getp1moving_direction,
-      getp2moving_direction,
+      setp1Dir,
+      setp2Dir,
+      getp1Dir,
+      getp2Dir,
       setnow,
       getnow,
       setp1stop,

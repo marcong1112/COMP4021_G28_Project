@@ -19,8 +19,8 @@ const Socket = (function() {
             console.log(socket.connected);
         });
 
-        socket.on("getcoordinates", (users) => {
-            console.log("getcoordinates received!", users);
+        socket.on("getPos", (users) => {
+            console.log("getPos received!", users);
           });
 
         socket.on("clicked", () => {
@@ -46,11 +46,6 @@ const Socket = (function() {
         
         });
 
-        socket.on("startgame", (users) => {
-            console.log("game start received!");
-            console.log("user", users);
-          });
-
           socket.on("bomb", (data) => {
             console.log("receive bomb!", data);
             data = JSON.parse(data);   
@@ -58,13 +53,12 @@ const Socket = (function() {
           });
 
           socket.on("move", (movement) => {
-            console.log("receive move!", movement);
             movement = JSON.parse(movement);
             if (player == 1) {
-              PlayerSet.setp2moving_direction(movement.keyCode);
+              PlayerSet.setp2Dir(movement.keyCode);
               
             } else {
-               PlayerSet.setp1moving_direction(movement.keyCode);
+               PlayerSet.setp1Dir(movement.keyCode);
              
             }
           });
@@ -149,13 +143,7 @@ const Socket = (function() {
         return player;
       };
     
-      const pairusers = function () {
-        console.log("in pairusers @socket!");
-        if (socket && socket.connected) {
-          socket.emit("pairusers");
-        }
-      };
 
 
-    return {getSocket, connect, disconnect,getSessionPlayer,MoveRequest,pairusers,stopping,started,online,BombRequest};
+    return {getSocket, connect, disconnect,getSessionPlayer,MoveRequest,stopping,started,online,BombRequest};
 })();

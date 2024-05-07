@@ -10,12 +10,12 @@
     #game-container {
         position: relative;
     }
-    canvas, #counter, #game-start, #game-over{
+    canvas, #counter, #game-start, #game-over {
         position: absolute;
         top: 0px;
         left: 0px;
     }
-    canvas, #game-start, #game-over{
+    canvas, #game-start, #game-over {
         border: 1px solid gray;
         width: 992px;
         height: 416px;
@@ -24,7 +24,7 @@
         background: url(MinefieldBG.png);
         background-size: cover;
     }
-    #game-start, #game-over{
+    #game-start, #game-over {
         background: rgba(1, 1, 1, 0.8);
     }
     #counter text {
@@ -51,6 +51,39 @@
     </style>
 </head>
 <body>
+    <div id="signin-overlay" class="overlay row">
+        <div class="content shadow row">
+            <form id="signin-form" class="col">
+                <div class="caption">SIGN IN WITH YOUR ACCOUNT</div>
+                <div class="spacer-0"></div>
+                <input id="signin-username" placeholder="Enter your username"></input>
+                <input id="signin-password" type="password" placeholder="Enter your password"></input>
+                <div class="spacer-0"></div>
+                <button type="submit">Sign In</button>
+                <div id="signin-message" class="warning center"></div>
+                <div class="spacer-grow"></div>
+            </form>
+
+            <div class="spacer-0"></div>
+
+            <form id="register-form" class="col">
+                <div class="caption">OR, REGISTER IF YOU DO NOT HAVE ONE</div>
+                <div class="spacer-0"></div>
+                <input id="register-username" maxlength="10" placeholder="Enter your username"></input>
+            
+                <input id="register-name" maxlength="16" placeholder="Enter your name"></input>
+                <input id="register-password" type="password" placeholder="Enter your password"></input>
+                <input id="register-confirm" type="password" placeholder="Enter your password again"></input>
+                <div class="spacer-0"></div>
+                <button type="submit">Register</button>
+                <div id="register-message" class="warning center"></div>
+            </form>
+        </div>
+    </div>
+
+
+
+
     <div id="game-container">
         <canvas width="992px" height="416px"></canvas>
 
@@ -112,23 +145,57 @@
         </svg>
     </div>
 
-
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script src="bounding_box.js"></script>
-    <script src="sprite.js"></script>
-    <script src="player.js"></script>
-    <script src="gem.js"></script>
-    <script src="fire.js"></script>
-    <script src="Obstacle.js"></script>
-    <script src="EmptyObstacle.js"></script>
-    <script src="Bomb.js"></script>
+    <script src="Server/bounding_box.js"></script>
+    <script src="Server/sprite.js"></script>
+    <script src="Server/player.js"></script>
+    <script src="Server/gem.js"></script>
+    <script src="Server/fire.js"></script>
+    <script src="Server/Obstacle.js"></script>
+    <script src="Server/EmptyObstacle.js"></script>
+    <script src="Server/Bomb.js"></script>
+    <script src="./socket.io/socket.io.min.js"></script>
+    <script src="Server/socket.js"></script>
+    <script src="Server/avatar.js"></script>
+    <script src="Server/ui.js"></script>
+    <script src="Server/registration.js"></script>
+    <script src="Server/authentication.js"></script>
+    <script src="Server/playerSet.js"></script>
     <script>
+    $(document).ready(function() {
 
+         // Validate the signin
+        //temp use
+        Authentication.validate(
+            () => {
+                $("#signin-overlay").hide();                
+                Socket.connect();
+            },
+            () => { }
+        );
+        //temp use
+        $("#signin-form").on("submit", (e) => {
+            e.preventDefault();
+            const username = $("#signin-username").val().trim();
+            const password = $("#signin-password").val().trim();
+            Authentication.signin(username, password,
+            async () => {
+                    $("#signin-overlay").hide();
+                    Socket.connect();
+                    PlayerSet.init();
+                    await new Promise((resolve) => setTimeout(resolve, 4000));
+                },
+                (error) => { $("#signin-message").text(error); }
+            );
+        });
     
-    $(function() {
+
+
+
         /* Get the canvas and 2D context */
         const cv = $("canvas").get(0);
         const context = cv.getContext("2d");
+        
 
         /* Create the sounds */
         const sounds = {
@@ -139,20 +206,28 @@
 
         let gameoverflag = false;
 
-        const totalGameTime = 10;   // Total game time in seconds
+
+        const totalGameTime = 180;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         const bombMaxAge = 2000;    // The maximum age of the bombs in milliseconds
 
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
+        let lastBombPlacedTimeForP1 = 0;
+        let lastBombPlacedTimeForP2 = 0;
+        let P1CheatCode=false;
+        let P2CheatCode=false;
 
         /* Create the game area */
         //const gameArea = BoundingBox(context, 32, 48, 352, 944);
         const gameArea = BoundingBox(context, 32, 48, 360, 944);
 
         /* Create the sprites in the game */
-
-        const player = Player(context, 80, 235, gameArea); // The player\
+        //const player = Player(context, 80, 235, gameArea); // The player\
+        PlayerSet.createplayer(context, 80, 235, gameArea,1);
+        PlayerSet.createplayer(context, 912, 235-32-32, gameArea,2);
+        const player1 = PlayerSet.getp1();
+        const player2 = PlayerSet.getp2();
         
         const gemcolors = ["green", "red", "yellow", "purple"];
         let gemlist = [
@@ -160,14 +235,6 @@
             Gem(context, 368, 360, gemcolors[Math.floor(Math.random() * 4)]),
             Gem(context, 624, 75, gemcolors[Math.floor(Math.random() * 4)]),
         ]
-
-        //create 4 fires at each corner of the game area
-        const fires = [
-            Fire(context, 16, 165),
-            Fire(context, 16, 464),
-            Fire(context, 838, 165),
-            Fire(context, 838, 464)
-        ]; // The fires */
         const MapObstacle = [
             Obstacle(context, 336, 368),
             Obstacle(context, 336, 304),
@@ -361,9 +428,8 @@
         ];
 
         //const bomb = Bomb(context, 80, 176);   
-        let bomblist = [
-            //Bomb(context, 80, 176),
-        ];  
+        let bomblist = null;
+        PlayerSet.setMapObstacle(MapObstacle,MapEmptyObstacle,context);  
 
         //make array of array to store effect bomb, each entry stores 4 bomb effects
         let effectbomblist =[];
@@ -374,6 +440,7 @@
         /* The main processing of the game */
         function doFrame(now) {
             if (gameStartTime == 0) gameStartTime = now;
+            PlayerSet.setnow(now);
 
             /* Start the background music */
             sounds.background.loop = true;
@@ -401,69 +468,89 @@
                 return;
             }
 
-            /* Update the sprites */
-            //gem.update(now);
-
-
-            //bomb.update(now);
-            //bomblist.forEach(Bomb => Bomb.update(now));
-
-            player.update(now, MapObstacle, MapEmptyObstacle);
-            fires.forEach(fire => fire.update(now));
+            player1.update(now, MapObstacle, MapEmptyObstacle);
+            player2.update(now, MapObstacle, MapEmptyObstacle);
+            collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());
 
             /* Clear the screen */
             context.clearRect(0, 0, cv.width, cv.height);
 
             /* Draw the sprites */
-
+            bomblist=PlayerSet.getbomblist();
             gemlist.forEach(gem => gem.draw());
-            fires.forEach(fire => fire.draw());
+            // fires.forEach(fire => fire.draw());
             MapObstacle.forEach(Obstacle => Obstacle.draw());
             MapEmptyObstacle.forEach(EmptyObstacle => EmptyObstacle.draw());
             bomblist.forEach(Bomb => Bomb.draw());
-            player.draw();
+            player1.draw();
+            player2.draw();
            
             bomblist.forEach(Bomb => {
                 if (Bomb.getAge(now) > bombMaxAge){
-                    //Bomb.clear();
-                    //delay 1 second before removing bomb from bomblist
-                    //get x and y of bomb
                     let {x, y} = Bomb.getXY();
 
-                    //explode the 4 bombs to get the effect of explosion
-  
                     Bomb_index = bomblist.indexOf(Bomb);
                     Bomb.explode(1);
-                    
                     if (Bomb.detectCollision(MapObstacle)){
-                        collectedGems++;
+                        // if(Bomb.getOwnPlayer() == Socket.getSessionPlayer()){
+                        //     collectedGems++;
+                        // }
+                        PlayerSet.addScore(Bomb.getOwnPlayer(),1);
                     };
-                    
+
                     (Bomb.PassAreaBomb(0)).draw();
                     (Bomb.PassAreaBomb(1)).draw();
                     (Bomb.PassAreaBomb(2)).draw();
                     (Bomb.PassAreaBomb(3)).draw();
+                    let checkP1Bomb=Bomb.detectCollisionWithPlayer(player1);
+                    let checkP2Bomb=Bomb.detectCollisionWithPlayer(player2);
 
-                    //detect collision with player
-                    if (Bomb.detectCollisionWithPlayer(player)){
-                        //game overx
-                        gameoverflag = true;
-                        //TODO: add score to opponent player
-                        return;
-                    };
+                    if ( checkP1Bomb==true || checkP2Bomb==true ){
+                        //   checkP1Bomb=P1 hit by bomb, Bomb own by P1, so P1 kill itself
+                        if (checkP1Bomb==true&&Bomb.getOwnPlayer()==1){
+                            PlayerSet.addScore(2,100);
+                            collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());                        
+                        }
+                        //   checkP1Bomb=P1 hit by bomb, Bomb own by P2, so P2 kill P1
+                        else if (checkP1Bomb==true&&Bomb.getOwnPlayer()==2){
+                            PlayerSet.addScore(2,100);
+                            collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());                        
+                        }
+                        //   checkP2Bomb=P2 hit by bomb, Bomb own by P1, so P1 kill P2
+                        else if (checkP2Bomb==true&&Bomb.getOwnPlayer()==1){
+                            PlayerSet.addScore(1,100);
+                            collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());
+                        }
+                        //   checkP1Bomb=P2 hit by bomb, Bomb own by P2, so P2 kill itself
+                        else if (checkP2Bomb==true&&Bomb.getOwnPlayer()==2){
+                            PlayerSet.addScore(1,100);
+                            collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());
+                        }
 
+                        gameoverflag = true;                    
+                        console.log("Game Over Score", collectedGems);                        
+                    };                 
                     setTimeout(() => {
-                        bomblist = bomblist.filter(bomb => bomb !== Bomb);
-                    }, 1000);
+                        PlayerSet.removeBomb(Bomb);
+                    }, 500);
                 }
             });
             
-        
-            //const {x, y} = gem.getXY();
+
             gemlist.forEach(gem => {
                 let {x, y} = gem.getXY();
-                if (player.getBoundingBox().isPointInBox(x, y)){
-                    collectedGems+=5;
+                if (player1.getBoundingBox().isPointInBox(x, y)){
+                    PlayerSet.addScore(1,5);
+                    gem.reset();
+                    console.log("collected gem!");
+                    //pause collect sound
+                    sounds.collect.pause();
+                    //set collect sound to 0
+                    sounds.collect.currentTime = 0;
+                    sounds.collect.play();
+                }
+                if (player2.getBoundingBox().isPointInBox(x, y)){
+                    PlayerSet.addScore(2,5);
                     gem.reset();
                     console.log("collected gem!");
                     //pause collect sound
@@ -474,10 +561,11 @@
                 }
             });
 
+
             /* Process the next frame */
             requestAnimationFrame(doFrame);
         }
-         
+
         /* Handle the start of the game */
         $("#game-start").on("click", function() {
             /* Hide the start screen */
@@ -485,58 +573,106 @@
 
             /* Handle the keydown of arrow keys and spacebar */
             $(document).on("keydown", function(event) {
-                /* TODO */
-                /* Handle the key down */
-                //console.log(event.keyCode);
+                console.log("key down")
+                Socket.MoveRequest({
+                player: Socket.getSessionPlayer(),
+                coordinates: Socket.getSessionPlayer() == 1? player1.getXY():player2.getXY(),
+                event: "keydown",
+                keyCode: event.keyCode
+                });
+                console.log("player: " + Socket.getSessionPlayer());
+                if(Socket.getSessionPlayer() == 1){
                 if (event.keyCode == 37) {
-                    player.move(1);
+                    player1.move(1);
                 } else if (event.keyCode == 38) {
-                    player.move(2);
+                    player1.move(2);
                 } else if (event.keyCode == 39) {
-                    player.move(3);
+                    player1.move(3);
                 } else if (event.keyCode == 40) {
-                    player.move(4);
+                    player1.move(4);
                 }
                 
-                //if spacebar is pressed, increase player move speed
-                if (event.keyCode == 32){
-                    player.speedUp();
+                let BombcurrentTime=performance.now();
+                if(BombcurrentTime - lastBombPlacedTimeForP1 >= 3000 || P1CheatCode==true){
+                    if (event.keyCode == 65){
+                        Socket.BombRequest({
+                        player: Socket.getSessionPlayer(),
+                        ctx: context,
+                        event: "keydown",
+                        keyCode: event.keyCode
+                        });
+                        lastBombPlacedTimeForP1 = BombcurrentTime;
+                        let {x, y} = player1.getXY();
+                        bomblist.push(Bomb(context, x, y,1));
+                    }
                 }
 
-                //if "a" is pressed, bomb is placed at player's position
-                if (event.keyCode == 65){
-                    //get current player position
-                    let {x, y} = player.getXY();
-                    console.log("player x: " + x + " player y: " + y);
-                    
-                    //create new bomb at player's position and append to bomblist
-                    bomblist.push(Bomb(context, x, y));
+                if(event.keyCode == 32){
+                    P1CheatCode = true;
                 }
+
+            }else{
+                if (event.keyCode == 37) {
+                    player2.move(1);
+                } else if (event.keyCode == 38) {
+                    player2.move(2);
+                } else if (event.keyCode == 39) {
+                    player2.move(3);
+                } else if (event.keyCode == 40) {
+                    player2.move(4);
+                }
+                
+                let BombcurrentTime=performance.now();
+                if (BombcurrentTime - lastBombPlacedTimeForP2 >= 3000 || P2CheatCode==true){
+                        if (event.keyCode == 65){
+                            Socket.BombRequest({
+                            player: Socket.getSessionPlayer(),
+                            ctx: context,
+                            event: "keydown",
+                            keyCode: event.keyCode
+                            });
+                            lastBombPlacedTimeForP2 = BombcurrentTime;
+                    let {x, y} = player2.getXY();
+                    bomblist.push(Bomb(context, x, y,2));
+
+                    
+                }
+                }
+                if(event.keyCode == 32){
+                    P2CheatCode = true;
+                }
+
+            }
 
             });
 
             /* Handle the keyup of arrow keys and spacebar */
             $(document).on("keyup", function(event) {
-                /* TODO */
-                /* Handle the key up */
-                //console.log(event.keyCode);
+                Socket.stopping({
+                player: Socket.getSessionPlayer(),
+                coordinates: Socket.getSessionPlayer() == 1? player1.getXY():player2.getXY(),
+                event: "keyup",
+                keyCode: event.keyCode
+                });
                 if (event.keyCode == 37) {
-                    player.stop(1);
+                    player1.stop(1);
+                    player2.stop(1);
                 } else if (event.keyCode == 38) {
-                    player.stop(2);
+                    player1.stop(2);
+                    player2.stop(2);
                 } else if (event.keyCode == 39) {
-                    player.stop(3);
+                    player1.stop(3);
+                    player2.stop(3);
                 } else if (event.keyCode == 40) {
-                    player.stop(4);
-                }
-
-                if (event.keyCode == 32){
-                    player.slowDown();
+                    player1.stop(4);
+                    player2.stop(4);
                 }
     
             });
 
             /* Start the game */
+            //console.log(player.getXY());
+            //gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
     });

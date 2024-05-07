@@ -94,7 +94,7 @@ const Player = function(ctx, x, y, gameArea) {
             });
 
             let isEmptyObstacle = EmptyObstacle.some(obstacle => {
-                let emptyobstacleBox = obstacle.getBoundingBox();
+                let emptyobstacleBox = obstacle.getSmallBox(3);
                 //console.log(newX, newY,obstacleBox.isPointInBox(newX, newY),sprite.getHeight());
                 return emptyobstacleBox.isPointInBox(newX, newY)|| emptyobstacleBox.isPointInBox(newX, newY+20);
             });

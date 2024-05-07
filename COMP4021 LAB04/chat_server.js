@@ -7,7 +7,7 @@ const session = require("express-session");
 const app = express();
 
 // Use the 'public' folder to serve static files
-app.use(express.static("./"));
+app.use(express.static("gem_rush"));
 
 // Use the json middleware to parse JSON data
 app.use(express.json());
@@ -28,7 +28,7 @@ function containWordCharsOnly(text) {
     return /^\w+$/.test(text);
 }
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname +"/gem_rush/gem_rush.html");
   });
 
 // Handle the /register endpoint
@@ -36,13 +36,8 @@ app.post("/register", (req, res) => {
     // Get the JSON data from the body
     const { username, avatar, name, password } = req.body;
 
-    //
-    // D. Reading the users.json file
-    const users = JSON.parse(fs.readFileSync("data/users.json"));
-    //
-
-    //
-    // E. Checking for the user data correctness
+    const users = JSON.parse(fs.readFileSync("./gem_rush/Server/JSON/users.json"));
+   
     if (!username || !avatar || !name || !password) {
         res.json({
             status: "error", 
@@ -66,26 +61,14 @@ app.post("/register", (req, res) => {
         });
         return;
     }
-    //
-
-    //
-    // G. Adding the new user account
+    
     const hash = bcrypt.hashSync(password, 10);
     users[username] = { avatar: avatar, name: name, password: hash };
-    //
-
-    //
-    // H. Saving the users.json file
-    fs.writeFileSync("users.json", JSON.stringify(users, null, " "));
-    //
-
-    //
-    // I. Sending a success response to the browser
+   
+    fs.writeFileSync("./gem_rush/Server/JSON/users.json", JSON.stringify(users, null, " "));
+   
     res.json({ status: "success" });
-    //
-
-    // Delete when appropriate
-    //res.json({ status: "error", error: "This endpoint is not yet implemented." });
+    
 });
 
 // Handle the /signin endpoint
@@ -93,7 +76,7 @@ app.post("/signin", (req, res) => {
 
     const { username, password } = req.body;
 
-    const users=JSON.parse(fs.readFileSync("./users.json"))
+    const users=JSON.parse(fs.readFileSync("./gem_rush/Server/JSON/users.json"))
 
     if (username in users === false) {
         res.json({ status: "error", error: "Username does not exist" });
@@ -134,9 +117,7 @@ app.get("/signout", (req, res) => {
 
     // Sending a success response
     res.json({ status: "success" });
-    //
-    // Delete when appropriate
-    //res.json({ status: "error", error: "This endpoint is not yet implemented." });
+
 });
 
 
@@ -211,9 +192,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("stopping", (content) => {
-        //console.log("stopping emitted");
         io.emit("stopping", JSON.stringify(content));
-        //console.log("stopping emitted from server:", content);
       });
 
     socket.on("move", (pressed) => {
