@@ -3,6 +3,7 @@
 <head>
     <title>Collect the Gems!</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
     <style>
     body {
         font-family: "Press Start 2P", sans-serif;
@@ -51,7 +52,7 @@
     </style>
 </head>
 <body>
-    <div id="signin-overlay" class="overlay row">
+    <!-- <div id="signin-overlay" class="overlay row">
         <div class="content shadow row">
             <form id="signin-form" class="col">
                 <div class="caption">SIGN IN WITH YOUR ACCOUNT</div>
@@ -78,9 +79,30 @@
                 <div id="register-message" class="warning center"></div>
             </form>
         </div>
+    </div> -->
+
+    <div id="waiting-room" class="overlay row" style="display: none">
+        <div class="content shadow row">
+            <div class="caption">WAITING FOR ANOTHER PLAYER TO JOIN</div>
+            <div class="spacer-0"></div>
+            <div class="spacer-grow"></div>
+        </div>
+        <!--Instructions-->
+        <div class="content shadow row">
+            <div class="caption">INSTRUCTIONS</div>
+            <div class="spacer-0"></div>
+            <div class="instructions">
+                <div>1. WASD keys for movement</div>
+                <div>2. Press "A" key to place a bomb</div>
+                <div>3. Press "Space" key to enable cheat mode</div>
+                <div>4. Collect gems or destroy obstacles to score points</div>
+                <div>5. Place bombs to kill the other players</div>
+                <div>6. Game ends when time is up or either player gets killed by the bomb</div>
+            </div>
+            <div class="spacer-0"></div> 
+            <div class="spacer-grow"></div>
+        </div>
     </div>
-
-
 
 
     <div id="game-container">
@@ -213,10 +235,6 @@
                 (error) => { $("#register-message").text(error); }
             );
         });
-    
-    
-
-
 
         /* Get the canvas and 2D context */
         const cv = $("canvas").get(0);

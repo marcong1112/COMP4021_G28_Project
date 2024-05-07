@@ -1,13 +1,15 @@
-@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P");
 :root {
     --material-icons-color: black;
     --field-color: gray;
     --field-background: white;
     --field-background-hover: #eee;
     --input-background: #eee;
-    --overlay-background: rgba(245, 158, 114, 0.8);
-    --overlay-caption-color: #eb4a40;
+    --overlay-background: rgba(189, 189, 189, 0.8);
+    --overlay-caption-color: #ffffff;
     --overlay-content-background: linear-gradient(white, #fde0c5);
+
+    --waiting-room-background: linear-gradient(to right, #7ed64b, rgb(214, 252, 192));
 
     --header-background: linear-gradient(to right, #eb4a40, #f59e72);
     --main-panel-background: linear-gradient(white, #fde0c5);
@@ -20,12 +22,12 @@
     --font-color: black;
     --date-color: gray;
 
-    --register-form-background: linear-gradient(#fde0c5, #facba6);
+    --register-form-background: linear-gradient(#26d635, #4aa4c0);
     --warning-color: red;
 
     --button-color: white;
-    --button-background: #f2855d;
-    --button-background-hover: #f8b58b;
+    --button-background: #002efa;
+    --button-background-hover: #001046;
 }
 * {
     font-family: "Abel", sans-serif;
@@ -235,18 +237,42 @@ button.icon:active {
 }
 
 /* Signin overlay */
-#signin-form {
+/* #signin-form {
     width: 270px;
     align-self: stretch;
+} */
+#signin-form {
+    color: white;
+    width: 270px;
+    align-self: stretch;
+    background: linear-gradient(to bottom, #4dda54, #c9e4c0);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
-#register-form {
+
+/* #register-form {
     width: 380px;
     background: var(--register-form-background);
     padding: 20px;
+} */
+#register-form {
+    width: 380px;
+    background: linear-gradient(to bottom, #ff2424, #fd5202);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
-
 /* Edit user overlay */
 #edit-user-form {
     width: 270px;
     align-self: stretch;
+}
+
+#waiting-room {
+    height: 400px;
+    width: 700px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
