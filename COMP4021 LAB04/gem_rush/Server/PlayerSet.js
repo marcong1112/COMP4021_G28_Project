@@ -12,8 +12,11 @@ const PlayerSet = (function () {
     p1Score=0;
     p2Score=0;
 
-    function init() {
-        Socket.online();
+    async function init() {
+      $("#waiting-room").show();
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (Socket.getSessionPlayer() == 2) {
+       Socket.online();}
     }
     const getWinner = function(){
         if(p1Score>p2Score){

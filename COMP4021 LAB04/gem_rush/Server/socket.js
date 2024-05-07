@@ -32,6 +32,9 @@ const Socket = (function() {
             console.log("game start received!");
             console.log("user", users);
             $("#signin-overlay").hide();
+            $("#waiting-room").hide();
+            $("#game-start").click();
+            $("#game-container").show();          
           });
 
         socket.on("playerStatus", (users)=>{

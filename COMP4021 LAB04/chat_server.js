@@ -149,7 +149,6 @@ io.on("connection", (socket) => {
                   status: "success",
                 })
             );
-            io.emit("startgame", JSON.stringify(onlineUsers));
         }else if (UserOnlineNum==2){
             onlineUsers[username].player=2;
             socket.emit(
@@ -158,7 +157,8 @@ io.on("connection", (socket) => {
                   player: UserOnlineNum,
                   status: "success",
                 })
-            );        
+            );
+            io.emit("startgame", JSON.stringify(onlineUsers));        
     }else {
         socket.emit(
           "loginstate",

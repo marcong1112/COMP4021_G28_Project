@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P");
+@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
 :root {
     --material-icons-color: black;
     --field-color: gray;
@@ -7,19 +7,19 @@
     --input-background: #eee;
     --overlay-background: rgba(189, 189, 189, 0.8);
     --overlay-caption-color: #ffffff;
-    --overlay-content-background: linear-gradient(white, #fde0c5);
+    --overlay-content-background: linear-gradient(#5c8bf8, #5c8bf8);
 
-    --waiting-room-background: linear-gradient(to right, #7ed64b, rgb(214, 252, 192));
+    --waiting-room-background: linear-gradient(to right, #7ed64b, rgb(106, 249, 239));
 
     --header-background: linear-gradient(to right, #eb4a40, #f59e72);
-    --main-panel-background: linear-gradient(white, #fde0c5);
-    --online-users-panel-background: linear-gradient(to right, #fde0c5, #facba6);
+    --main-panel-background: linear-gradient(white, #2968fb);
+    --online-users-panel-background: linear-gradient(to right, #2968fb, #2968fb);
     --chat-panel-background: none;
 
     --title-color: white;
     --caption-color: white;
 
-    --font-color: black;
+    --font-color: rgb(255, 255, 255);
     --date-color: gray;
 
     --register-form-background: linear-gradient(#26d635, #4aa4c0);
@@ -37,11 +37,12 @@
 
 /* Basic */
 body {
-    min-width: 600px;
+     min-width: 600px;
     min-height: 300px;
     height: 100vh;
     padding: 0;
-    margin: 0;
+    margin: 0; 
+    font-family: "Press Start 2P", sans-serif;
 }
 .center { text-align: center; }
 .shadow { box-shadow: 0px 0px 10px rgb(0, 0, 0, 0.4); }
@@ -153,6 +154,49 @@ button.icon:active {
 }
 
 /* Top level container */
+#game-container {
+    position: relative;
+}
+canvas, #counter, #game-start, #game-over {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+canvas, #game-start, #game-over {
+    border: 1px solid gray;
+    width: 992px;
+    height: 416px;
+}
+canvas {
+    background: url(MinefieldBG.png);
+    background-size: cover;
+}
+#game-start, #game-over {
+    background: rgba(1, 1, 1, 0.8);
+}
+#counter text {
+    font-size: 130%;
+    fill: white;
+    stroke: black;
+    stroke-width: 1px;
+}
+#game-start text {
+    font-size: 150%;
+    fill: white;
+    text-anchor: middle;
+}
+#game-start #game-title {
+    font-size: 400%;
+    fill: url(#title-fill);
+    stroke: black;
+}
+#game-over text {
+    font-size: 120%;
+    fill: url(#game-over-fill);
+    text-anchor: middle;
+}
+
 #container {
     align-items: stretch;
     gap: 0px;
