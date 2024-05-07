@@ -60,6 +60,12 @@
             </text>
         </svg>
 
+        <svg xmlns="http://www.w3.org/2000/svg" id="counter">
+            <text x="10" y="70">
+                Score:<tspan id="score-total">0</tspan>
+            </text>
+        </svg>
+
         <svg xmlns="http://www.w3.org/2000/svg" id="game-start">
             <defs>
                 <linearGradient id="title-fill" x1="0" y1="0" x2="0" y2="1">
@@ -98,6 +104,12 @@
     <script src="Obstacle.js"></script>
     <script src="EmptyObstacle.js"></script>
     <script src="Bomb.js"></script>
+    <script src="/socket.io/socket.io.min.js"></script>
+    <script src="server/public/scripts/socket.js"></script>
+    <script src="server/public/scripts/avatar.js"></script>
+    <script src="server/public/scripts/ui.js"></script>
+    <script src="server/public/scripts/registration.js"></script>
+    <script src="server/public/scripts/authentication.js"></script>
     <script>
     $(function() {
         /* Get the canvas and 2D context */
@@ -340,7 +352,9 @@
         //make array of array to store effect bomb, each entry stores 4 bomb effects
         let effectbomblist =[];
 
-        
+        /* TODO */
+        totalscore = 0;
+
         /* The main processing of the game */
         function doFrame(now) {
             if (gameStartTime == 0) gameStartTime = now;
@@ -353,6 +367,9 @@
             const gameTimeSoFar = now - gameStartTime;
             const timeRemaining = Math.ceil((totalGameTime * 1000 - gameTimeSoFar) / 1000);
             $("#time-remaining").text(timeRemaining);
+
+            /* Update the score */
+            $("#score-total").text(collectedGems);
 
             /* TODO */ /* DONE */
             /* Handle the game over situation here */
@@ -400,7 +417,9 @@
   
                     Bomb_index = bomblist.indexOf(Bomb);
                     Bomb.explode(1);
-                    Bomb.detectCollision(MapObstacle);
+                    if (Bomb.detectCollision(MapObstacle)){
+                        collectedGems++;
+                    };
 
                     //console.log(Bomb.checkCollision(MapObstacle));
                     //console.log(Bomb.PassAreaBomb(0).getXY(), Bomb.PassAreaBomb(1).getXY(), Bomb.PassAreaBomb(2).getXY(), Bomb.PassAreaBomb(3).getXY());
@@ -412,13 +431,10 @@
                     setTimeout(() => {
                         bomblist = bomblist.filter(bomb => bomb !== Bomb);
                     }, 1000);
-                    
-
                 }
             });
             
-            
-
+        
             //const {x, y} = gem.getXY();
             gemlist.forEach(gem => {
                 let {x, y} = gem.getXY();
