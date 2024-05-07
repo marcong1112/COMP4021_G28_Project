@@ -70,7 +70,6 @@
                 <div class="caption">OR, REGISTER IF YOU DO NOT HAVE ONE</div>
                 <div class="spacer-0"></div>
                 <input id="register-username" maxlength="10" placeholder="Enter your username"></input>
-            
                 <input id="register-name" maxlength="16" placeholder="Enter your name"></input>
                 <input id="register-password" type="password" placeholder="Enter your password"></input>
                 <input id="register-confirm" type="password" placeholder="Enter your password again"></input>
@@ -179,15 +178,42 @@
             const username = $("#signin-username").val().trim();
             const password = $("#signin-password").val().trim();
             Authentication.signin(username, password,
-            async () => {
+                () => {
                     $("#signin-overlay").hide();
                     Socket.connect();
                     PlayerSet.init();
-                    await new Promise((resolve) => setTimeout(resolve, 4000));
                 },
                 (error) => { $("#signin-message").text(error); }
             );
         });
+
+        // Submit event for the register form
+        $("#register-form").on("submit", (e) => {
+            // Do not submit the form
+            e.preventDefault();
+
+            // Get the input fields
+            const username = $("#register-username").val().trim();
+            const name     = $("#register-name").val().trim();
+            const password = $("#register-password").val().trim();
+            const confirmPassword = $("#register-confirm").val().trim();
+
+            // Password and confirmation does not match
+            if (password != confirmPassword) {
+                $("#register-message").text("Passwords do not match.");
+                return;
+            }
+
+            // Send a register request
+            Registration.register(username, name, password,
+                () => {
+                    $("#register-form").get(0).reset();
+                    $("#register-message").text("You can sign in now.");
+                },
+                (error) => { $("#register-message").text(error); }
+            );
+        });
+    
     
 
 
@@ -526,6 +552,10 @@
                             PlayerSet.addScore(1,100);
                             collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());
                         }
+
+                        $("#player1-score").text(PlayerSet.getScore(1));
+                        $("#player2-score").text(PlayerSet.getScore(2));
+                        $("#winner").text(PlayerSet.getWinner());
 
                         gameoverflag = true;                    
                         console.log("Game Over Score", collectedGems);                        

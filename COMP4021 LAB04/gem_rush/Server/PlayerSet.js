@@ -12,9 +12,18 @@ const PlayerSet = (function () {
     p1Score=0;
     p2Score=0;
 
-    async function init() {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+    function init() {
         Socket.online();
+    }
+    const getWinner = function(){
+        if(p1Score>p2Score){
+            return "Player 1";
+        }else if(p1Score<p2Score){
+            return "Player 2";
+        }else{
+            return "Draw";
+        }
+
     }
     
     const createplayer = function (ctx, x, y, gameArea, playerNum) {
@@ -163,6 +172,7 @@ const PlayerSet = (function () {
   
     return {
         init,
+        getWinner,
         setBomb,
         removeBomb,
       setMapObstacle,
