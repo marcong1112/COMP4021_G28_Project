@@ -34,11 +34,11 @@ app.get("/", (req, res) => {
 // Handle the /register endpoint
 app.post("/register", (req, res) => {
     // Get the JSON data from the body
-    const { username, avatar, name, password } = req.body;
+    const { username, name, password } = req.body;
 
     const users = JSON.parse(fs.readFileSync("./gem_rush/Server/JSON/users.json"));
    
-    if (!username || !avatar || !name || !password) {
+    if (!username || !name || !password) {
         res.json({
             status: "error", 
             error: "Please fill in all the fields." 
@@ -63,7 +63,7 @@ app.post("/register", (req, res) => {
     }
     
     const hash = bcrypt.hashSync(password, 10);
-    users[username] = { avatar: avatar, name: name, password: hash };
+    users[username] = { name: name, password: hash };
    
     fs.writeFileSync("./gem_rush/Server/JSON/users.json", JSON.stringify(users, null, " "));
    
