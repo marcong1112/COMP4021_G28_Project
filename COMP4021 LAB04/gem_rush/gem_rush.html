@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Collect the Gems!</title>
+    <title>Bomber Link!</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
     <style>
@@ -29,10 +29,10 @@
         background: rgba(1, 1, 1, 0.8);
     }
     #counter text {
-        font-size: 130%;
+        font-size: 260%;
         fill: white;
-        stroke: black;
-        stroke-width: 1px;
+        stroke: rgb(253, 253, 253);
+        stroke-width: 2px;
     }
     #game-start text {
         font-size: 150%;
@@ -45,14 +45,14 @@
         stroke: black;
     }
     #game-over text {
-        font-size: 120%;
+        font-size: 200%;
         fill: url(#game-over-fill);
         text-anchor: middle;
     }
     </style>
 </head>
 <body>
-    <!-- <div id="signin-overlay" class="overlay row">
+    <div id="signin-overlay" class="overlay row">
         <div class="content shadow row">
             <form id="signin-form" class="col">
                 <div class="caption">SIGN IN WITH YOUR ACCOUNT</div>
@@ -79,11 +79,11 @@
                 <div id="register-message" class="warning center"></div>
             </form>
         </div>
-    </div> -->
+    </div>
 
     <div id="waiting-room" class="overlay row" style="display: none">
         <div class="content shadow row">
-            <div class="caption">WAITING FOR ANOTHER PLAYER TO JOIN</div>
+            <div class="caption">GAME START WHEN 2 PLAYERS ARE WAITING</div>
             <div class="spacer-0"></div>
             <div class="spacer-grow"></div>
         </div>
@@ -141,25 +141,28 @@
                     <stop offset="1" stop-color="red" />
                 </linearGradient>
             </defs>
-            <text x="50%" y="30%">
+            <text x="50%" y="10%">
+                Bomber Link!
+            </text>
+
+            <text x="50%" y="40%">
                 Game's Over!
-                <tspan id="final-gems">0</tspan>
             </text>
 
             <!--Show scores and rankings of players-->
-            <text x="50%" y="40%">
+            <text x="50%" y="50%">
                 Scores:
             </text>
-            <text x="50%" y="50%">
+            <text x="50%" y="60%">
                 Player 1: 
                 <tspan id="player1-score">0</tspan>
             </text>
-            <text x="50%" y="60%">
+            <text x="50%" y="70%">
                 Player 2: 
                 <tspan id="player2-score">0</tspan>
             </text>
 
-            <text x="50%" y="70%">
+            <text x="50%" y="80%">
                 The winner is:
                 <tspan id="winner">name</tspan>
                  !
@@ -184,7 +187,8 @@
     <script src="Server/playerSet.js"></script>
     <script>
     $(document).ready(function() {
-
+        $("#game-container").hide();
+        
          // Validate the signin
         //temp use
         Authentication.validate(
@@ -200,10 +204,12 @@
             const username = $("#signin-username").val().trim();
             const password = $("#signin-password").val().trim();
             Authentication.signin(username, password,
-                () => {
-                    $("#signin-overlay").hide();
-                    Socket.connect();
-                    PlayerSet.init();
+                async () => {
+                        $("#signin-overlay").hide();
+                        Socket.connect();
+                        //$("#signin-message").text("Waiting for Player 2...");
+                        PlayerSet.init();
+                        await new Promise((resolve) => setTimeout(resolve, 4000));
                 },
                 (error) => { $("#signin-message").text(error); }
             );
@@ -515,6 +521,7 @@
             player1.update(now, MapObstacle, MapEmptyObstacle);
             player2.update(now, MapObstacle, MapEmptyObstacle);
             collectedGems=PlayerSet.getScore(Socket.getSessionPlayer());
+            gemlist.forEach(gem => gem.update(now));
 
             /* Clear the screen */
             context.clearRect(0, 0, cv.width, cv.height);
@@ -723,6 +730,7 @@
             //gem.randomize(gameArea);
             requestAnimationFrame(doFrame);
         });
+        
     });
     </script>
 </body>
