@@ -29,5 +29,13 @@
  "Peter2": {
   "name": "Peter2",
   "password": "$2b$10$OmaqL4K62B0ViR4BhmLzPuH4Kua9/Wf4BkShCdogWawwR.foi3yX2"
+ },
+ "asdfg": {
+  "name": "asdfg",
+  "password": "$2b$10$Ncbddg.w4ytVpyVg7Jr0qeGop854uKiYyC/sdbkWc5Td3dNPN0FmS"
+ },
+ "Breathejai": {
+  "name": "Breathe jai",
+  "password": "$2b$10$NuFVTernft75CEBrgYxl9.G/Eh0Mes/6.uBajWVa.Qf6ezOcojIs6"
  }
 }
