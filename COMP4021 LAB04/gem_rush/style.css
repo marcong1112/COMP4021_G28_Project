@@ -4,9 +4,9 @@
     --field-color: gray;
     --field-background: white;
     --field-background-hover: #eee;
-    --input-background: #eee;
+    --input-background: Black;
     --overlay-background: rgba(189, 189, 189, 0.8);
-    --overlay-caption-color: #ffffff;
+    --overlay-caption-color: black;
     --overlay-content-background: linear-gradient(#5c8bf8, #5c8bf8);
 
     --waiting-room-background: linear-gradient(to right, #7ed64b, rgb(106, 249, 239));
