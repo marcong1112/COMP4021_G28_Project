@@ -82,13 +82,13 @@ app.post("/signin", (req, res) => {
         res.json({ status: "error", error: "Username does not exist" });
         return;
     }
-    if (!bcrypt.compareSync(password, users[username].hash)) {
+    if (!bcrypt.compareSync(password, users[username].password)) {
         res.json({ status: "error", error: "Password incorrect" });
         return;
     }
 
-    const { avatar, name } = users[username];
-    req.session.user = {username, avatar, name};
+    const { name } = users[username];
+    req.session.user = {username, name};
     res.json({ status: "success", user: req.session.user });
 
 });
