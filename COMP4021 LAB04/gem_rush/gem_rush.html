@@ -510,6 +510,9 @@
                 $(document).off("keydown");
                 $(document).off("keyup");
 
+                $("#player1-score").text(PlayerSet.getScore(1));
+                $("#player2-score").text(PlayerSet.getScore(2));
+                $("#winner").text(PlayerSet.getWinner());
                 $("#game-over").show();
                 $("#final-gems").text(collectedGems);
                 sounds.background.pause();
@@ -615,6 +618,8 @@
                     sounds.collect.play();
                 }
             });
+
+
 
 
             /* Process the next frame */
